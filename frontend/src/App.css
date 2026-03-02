@@ -1,0 +1,31 @@
+@import url('https://fonts.googleapis.com/css2?family=Italiana&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Abhaya+Libre:wght@600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Abhaya+Libre:wght@600&display=swap');
+
+.custom-abhaya {
+  font-family: 'Abhaya Libre', serif;
+  font-weight: 600;
+}
+
+
+
+.font-abhaya {
+  font-family: 'Abhaya Libre', serif;
+}
+
+.italiana-font {
+  font-family: 'Italiana', serif;
+}
+
+
+.inter-font {
+  font-family: "Inter", sans-serif;
+}
+
+.tracking-ultra-wide {
+  letter-spacing: 0.3em;
+}
+
+/* .input {
+  @apply border rounded px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-black/20;
+} */
