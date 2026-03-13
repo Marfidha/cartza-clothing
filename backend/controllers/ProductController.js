@@ -5,17 +5,12 @@ import MainCategory from "../models/MainCategory.js";
 
 
 export const addproduct= async (req,res)=>{
-     console.log(req.body);
      try{
-
         if (!req.files || req.files.length === 0) {
         return res.status(400).json({ message: "No images uploaded" });
         }
-
-        
-
-        // 🔹 upload all images to Cloudinary
-   const images= await Promise.all(
+        // upload all images to Cloudinary
+       const images= await Promise.all(
         req.files.map((file ,index)=>{
           return new Promise((resolve, reject) => {
             cloudinary.uploader.upload_stream(
@@ -35,19 +30,10 @@ export const addproduct= async (req,res)=>{
           });
         })
       );
-
-
-    
     const { mainCategory, subCategory, color } = req.body;
-
     const sku = await generateSku(mainCategory, subCategory, color);
-
-
-       const sizess = req.body["size"];
-
-
-       const newproduct=new Product({
-
+    const sizess = req.body["size"];
+        const newproduct=new Product({
              productName: req.body.productname,
              sku,
              mainCategory: req.body.mainCategory,
@@ -60,33 +46,46 @@ export const addproduct= async (req,res)=>{
              stock:Number(req.body.stock),
              status:req.body.status === "true",
              image:images
-            //  image: req.files.map(File=>File.filename)
-
-    })
-
-      await newproduct.save()
-    
-    
-    res.json({success:true, message:"product added"})
-    
-     }catch(error){
-      
- console.error("❌ ADD PRODUCT ERROR:", error);
-  if (error.code === 11000) {
-      return res.status(400).json({ message: "SKU already exists" });
-    }
-  return res.status(500).json({
-    success: false,
-    message: error.message,
-  });
-        
-    }
+          })
+        await newproduct.save()
+        res.json({success:true, message:"product added"})
+     }catch(error){  
+      console.error("❌ ADD PRODUCT ERROR:", error);
+        if (error.code === 11000) {
+            return res.status(400).json({ message: "SKU already exists" });
+          }
+        return res.status(500).json({
+          success: false,
+          message: error.message,
+        }); 
+          }
 }
 
-// $or: [
-    //   // { isDeleted: false },
-    //   // { isDeleted: { $exists: false } }
-    // ]
+export const productbycatogary = async (req, res) => {
+  const { slug, q } = req.query;
+  try {
+    // 1️⃣ find category
+    const categoryDoc = await MainCategory.findOne({ slug });
+    if (!categoryDoc) {
+      return res.status(404).json({ message: "Category not found" });
+    }
+    // 2️⃣ build query object
+    const query = {
+      mainCategory: categoryDoc._id,
+      isDeleted: false
+    };
+    // 3️⃣ if search exists
+    if (q) {
+      query.productName = { $regex: q, $options: "i" };
+    }
+    // 4️⃣ fetch products
+    const products = await Product.find(query);
+    res.status(200).json(products);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
 
 export const getallproduct=async (req,res)=>{
     const products = await Product.find() .populate("mainCategory", "name")
@@ -95,7 +94,47 @@ export const getallproduct=async (req,res)=>{
 }
 
 
+export const getproduct=async(req,res)=>{
+try{
+  const { id } = req.params;
+    const product = await Product.findById(id).populate("mainCategory");
+    if (!product) {
+      return res.status(404).json({ message: "Product not found" });
+    }
+    res.json(product);
+    }catch(err)
+    {
+    res.status(500).json({ message: err.message });
+}}
 
+export const updateProduct = async (req, res) => {
+  try {
+    const product = await Product.findById(req.params.id);
+    console.log(product)
+    if (!product) {
+      return res.status(404).json({ message: "Product not found" });
+    }
+    product.productName = req.body.productname;
+    product.mainCategory = req.body.mainCategory;
+    product.subCategory = req.body.subCategory;
+    product.description = req.body.description;
+    product.color = req.body.color;
+    product.material = req.body.material;
+    product.price = req.body.price;
+    product.stock = req.body.stock;
+    product.status = req.body.status === "true";
+    if (req.body.size) {
+      product.size = Array.isArray(req.body.size)
+        ? req.body.size
+        : [req.body.size];
+    }
+    await product.save();
+    res.json({ message: "Product updated successfully", product });
+  } catch (err) {
+     console.error("Update Product Error:", err);
+  res.status(500).json({ error: err.message });
+  }
+};
 
 export const softdelete =async (req ,res)=>{
      try{
@@ -118,18 +157,12 @@ res.status(500).json({ message: "Server error" });
 }
 }
 
-
-
-
 export const deletedproduct=async (req,res)=>{
     const softdeletedproducts= await Product.find({isDeleted:true})
   console.log("DELETED PRODUCTS FROM DB:", softdeletedproducts);
   res.json(softdeletedproducts)
 
 }
-
-
-
 
 export const restoreproduct=async (req,res)=>{
     try{
@@ -143,7 +176,6 @@ export const restoreproduct=async (req,res)=>{
     new:true
   }
  )
-
  if (!product) {
       return res.status(404).json({ message: "Product not found" });
     }
@@ -203,42 +235,6 @@ export const replaceoneimage=async (req,res)=>{
       res.status(500).json({ message: err.message });
     }
   
-}
-
-
-export const productbycatogary= async (req,res)=>{
- 
-  const { slug } = req.query;
-console.log(slug);
-
-
-  try {
-    const categoryDoc = await MainCategory.findOne({
-      slug: slug
-    });
-    console.log(categoryDoc);
-    
-
-    if (!categoryDoc) {
-      return res.status(404).json({ message: "Category not found" });
-    }
-console.log("CategoryDoc:", categoryDoc?._id);
-const productt=await Product.find()
-console.log(productt);
-
-    // 2️⃣ Use ID to get products
-    const products = await Product.find({
-      mainCategory: categoryDoc._id,
-      isDeleted: false
-    });
-    console.log(products);
-    
-
-    res.status(200).json(products);
-
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
 }
 
 

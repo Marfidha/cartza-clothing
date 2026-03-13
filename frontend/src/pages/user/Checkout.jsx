@@ -18,6 +18,7 @@ import {
   Plus, 
   X 
 } from "lucide-react";
+import axios from 'axios';
 
 function Checkout() {
   const dispatch=useDispatch()
@@ -134,26 +135,77 @@ useEffect(() => {
 
  
 const handlePlaceOrder = async() => {
-  if (!selectedAddressId) {
-    showModal({
-    title: "Delivery Address Required",
-    message: "Please select or add a delivery address to continue.",
-    type: "warning",
-  });
-    return;
-  }
-   if (selectedPayment === "razorpay") {
-    showToast("Online payment not available yet", "info");
-    return;
-  }
- try{
- const res=await dispatch(createOrder({
-     selectedAddressId,selectedPayment,  directItem: isDirect ? directProduct : null
-  })).unwrap()
+        if (!selectedAddressId) {
+          showModal({title: "Delivery Address Required", message: "Please select or add a delivery address to continue.", type: "warning",  });
+          return;
+        }
+      try{
+        const token = localStorage.getItem("token");
+        if(selectedPayment==="wallet"){
+          const res=await dispatch(createOrder({selectedAddressId,selectedPayment,  directItem: isDirect ? directProduct : null})).unwrap()
+          navigate("/processing", { state: { orderId: res.orderId}, replace: true})
+        return
+        }
+       if (selectedPayment === "razorpay") {
 
-      // alert("Order placed successfully!");
+      // 1️⃣ create razorpay order from backend
+      const razorRes = await axios.post("http://localhost:3001/api/payment/create-razorpay-order",
+        {amount: total},
+        { headers: { Authorization: `Bearer ${token}`},}
+      );
+      const razorData = razorRes.data;
+      const options = {
+        key: razorData.key,
+        amount: razorData.amount,
+        currency: razorData.currency,
+        order_id: razorData.razorpayOrderId,
 
-        navigate("/processing", { state: { orderId: res.orderId}, replace: true})
+        name: "Cartza Clothing",
+
+        handler: async function (response) {
+          console.log("Razorpay response:", response);
+          const verifyRes = await axios.post("http://localhost:3001/api/payment/verify-payment",
+            {
+              razorpay_order_id: response.razorpay_order_id,
+              razorpay_payment_id: response.razorpay_payment_id,
+              razorpay_signature: response.razorpay_signature
+            },
+            {headers: {Authorization: `Bearer ${token}`},}
+          );
+          
+          console.log("verify response:", verifyRes.data);
+         const data = verifyRes.data;
+
+          if (data.success) {
+            // 3️⃣ create DB order
+            const orderRes = await dispatch(createOrder({
+              selectedAddressId,
+              selectedPayment: "razorpay",
+              directItem: isDirect ? directProduct : null
+            })).unwrap();
+
+            navigate("/processing", {
+              state: { orderId: orderRes.orderId },
+              replace: true
+            });
+
+          } else {
+            showToast("Payment verification failed", "error");
+          }
+
+        }
+      };
+
+      const razorpay = new window.Razorpay(options);
+
+      razorpay.on("payment.failed", function () {
+        showToast("Payment failed", "error");
+      });
+
+      razorpay.open();
+    }
+
+
  }catch(error){
   if (error === "INSUFFICIENT_WALLET_BALANCE") {
       // navigate("/wallet");

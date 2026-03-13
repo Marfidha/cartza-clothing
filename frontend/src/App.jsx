@@ -36,6 +36,7 @@ import ForgotPasswordPage from './pages/user/ForgotPasswordPage.jsx';
 import OrderProcessing from './pages/user/OrderProcessing.jsx';
 import OneCustomerDetails from './pages/Admin/OneCustomerDetails.jsx';
 import AdminOrderDetails from './pages/Admin/AdminOrderDetails.jsx';
+import OneProductDetails from './pages/Admin/OneProductDetails.jsx';
 
 
 function App() {
@@ -74,6 +75,8 @@ function App() {
         <Route path="products">
            <Route index element={<AdminProducts />} />
            <Route path="add" element={<AddProductPage />} />
+           <Route path='edit/:id'element={<AddProductPage/>}/>
+           <Route path=':id' element={<OneProductDetails/>}></Route>
         </Route>
         {/* <Route path="products" element={<AdminProducts />} />
         <Route path="products/add" element={<AddProductPage/>} /> */}

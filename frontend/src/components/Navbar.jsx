@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect ,useRef} from 'react';
 import { Search, User, ShoppingBag, Menu, X, Heart, ArrowRight } from 'lucide-react';
 import { useParams } from "react-router-dom";
 import {  Link ,useNavigate} from 'react-router-dom'
@@ -13,6 +13,10 @@ const Navbar = () => {
 
     const [scrolled, setScrolled] = useState(false);
     const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+    const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const searchInputRef = useRef(null);
 
     const [selectedMain, setSelectedMain] = useState("");
     const { items, loading, error } = useSelector((state) => state.categories);
@@ -38,6 +42,15 @@ const Navbar = () => {
   window.addEventListener("scroll", handleScroll);
   return () => window.removeEventListener("scroll", handleScroll);
 }, []);
+
+
+const handleSearchSubmit = (e) => {
+  if (e.key === "Enter" && searchQuery.trim()) {
+    navigate(`${location.pathname}?q=${encodeURIComponent(searchQuery)}`);
+    setSearchQuery(""); 
+    setIsSearchOpen(false);
+  }
+};
 
   return (
     <>
@@ -77,9 +90,37 @@ const Navbar = () => {
            scrolled || !isCategoryPage ? 'text-[#1E293B]' : 'text-white'
           }`}>
             {isCategoryPage && (
-            <Search size={20}
-              onClick={() => setSearchOpen(!searchOpen)}
-             className="cursor-pointer hover:text-[#8B5CF6] transition-colors" />
+              <div className="flex items-center relative">
+                <Search
+                  size={20}
+                  onClick={() => setIsSearchOpen(!isSearchOpen)}
+                  className="cursor-pointer hover:text-[#8B5CF6] transition-all duration-300 z-10"
+                />
+                <div className={`overflow-hidden transition-all duration-300 ease-in-out flex items-center ${
+                  isSearchOpen ? 'w-48 ml-2 opacity-100' : 'w-0 opacity-0 pointer-events-none'
+                }`}>
+                  <input
+                    ref={searchInputRef}
+                    type="text"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    onKeyDown={handleSearchSubmit}
+                    placeholder="Search products..."
+                    className={`bg-transparent border-b outline-none text-sm w-full py-1 transition-colors duration-500 ${
+                      scrolled || !isCategoryPage 
+                        ? 'border-[#1E293B]/20 focus:border-[#8B5CF6] text-[#1E293B]' 
+                        : 'border-white/20 focus:border-white text-white'
+                    }`}
+                  />
+                  {isSearchOpen && (
+                    <X 
+                      size={14} 
+                      className="ml-1 cursor-pointer opacity-50 hover:opacity-100" 
+                      onClick={() => { setIsSearchOpen(false); setSearchQuery(""); }}
+                    />
+                  )}
+                </div>
+              </div>
             )}
     
             <Link to="/whishlist"> <Heart size={20} className="cursor-pointer hover:text-[#8B5CF6] transition-colors" /></Link> 

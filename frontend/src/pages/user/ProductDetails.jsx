@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import axios from "axios"
-import { useNavigate ,useParams } from 'react-router-dom';
+import { useNavigate ,useParams ,useLocation} from 'react-router-dom';
 import whish from '../../assets/icons8-like-50.png'
 import { useDispatch, useSelector } from "react-redux";
-import { fetchWishlist,toggleWishlist } from '../../Redux/Slices/WhishlistSlice';
+import { fetchWishlist,toggleWishlist } from '../../Redux/Slices/WhishlistSlice.js';
 import { fetchCategories } from "../../Redux/Slices/CategorySlice.js";
 import UserRegistration from './UserRegistration';
 
@@ -21,6 +21,8 @@ function ProductDetails() {
   const { category } = useParams()
   const navigate= useNavigate()
   const dispatch = useDispatch();
+  const location = useLocation();
+  const query = new URLSearchParams(location.search).get("q");
 
   const [sortBy, setSortBy] = useState("Featured")
   const [priceRange, setPriceRange] = useState([0, 10000]); // min, max
@@ -58,14 +60,27 @@ function ProductDetails() {
           }, [isLoggedIn, dispatch]);
  
 
-  useEffect(()=>{
-    setproduct([])
-    const res=axios.get(`http://localhost:3001/api/product/productbycategory?slug=${category}`)
-    .then(res=> setproduct(res.data))
-    .catch((err) => console.error(err));
-  },[category])
+useEffect(() => {
 
+  const fetchProducts = async () => {
 
+    try {
+      const query = new URLSearchParams(location.search).get("q");
+      let url = `http://localhost:3001/api/product/productbycategory?slug=${category}`;
+      if (query) {
+        url += `&q=${query}`;
+      }
+      const res = await axios.get(url);
+      setproduct(res.data);
+    } catch (err) {
+      console.error(err);
+    }
+
+  };
+
+  fetchProducts();
+
+}, [category, location.search]);
 
   const handleWishlistClick = (e, productId) => {
   e.stopPropagation();

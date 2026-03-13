@@ -33,7 +33,7 @@ const transactionSchema = new mongoose.Schema(
 
     paymentMethod: {
       type: String,
-      enum: ["wallet", "upi", "card", "cod"],
+      enum: ["wallet", "razorpay", "cod"],
     },
 
     status: {

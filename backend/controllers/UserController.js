@@ -3,7 +3,6 @@ import Otp from "../models/otp.js"
 import user from "../models/User.js"
 import { sendEmail } from "../utils/sendEmail.js";
 import jwt from "jsonwebtoken"
-// import { useId } from "react";
 import whishlist from "../models/whishlist.js";
 import cart from '../models/CartProducts.js'
 import Address from "../models/Address.js";
@@ -14,6 +13,7 @@ import Order from "../models/Order.js"
 import Product from "../models/Product.js"
 import Feedback from "../models/Feedback.js";
 import Transactions from "../models/Transactions.js";
+import razorpay from "../config/RazorPay.js";
 
 
 
@@ -1004,21 +1004,21 @@ export const placeOrder = async (req, res) => {
     
     const userid = req.userId;
     const { selectedAddressId, selectedPayment, directItem } = req.body;
-    console.log(directItem);
+    console.log(selectedPayment,selectedAddressId,directItem);
     
-
-    // 🏠 1️⃣ Validate address
+ 
     const address = await Address.findById(selectedAddressId);
     if (!address) {
       return res.status(404).json({ message: "Address not found" });
     }
-
+   
+    
     // 📦 2️⃣ Build items (cart OR direct)
     let items = [];
     let Cart = null;
 
     if (directItem) {
-      // ⚡ DIRECT BUY NOW
+      // DIRECT BUY NOW
       const product = await Product.findById(directItem._id);
 
       if (!product)
@@ -1040,14 +1040,14 @@ export const placeOrder = async (req, res) => {
       });
 
     } else {
-      // 🛒 CART CHECKOUT
-      Cart = await cart
-        .findOne({ user: userid })
-        .populate("items.product");
+      //  CART CHECKOUT
+      Cart = await cart.findOne({ user: userid }).populate("items.product");
 
       if (!Cart || Cart.items.length === 0) {
         return res.status(400).json({ message: "Cart is empty" });
       }
+     
+      
 
       items = Cart.items.map((item) => ({
         product: item.product._id,
@@ -1059,7 +1059,8 @@ export const placeOrder = async (req, res) => {
       }));
     }
 
-    // 🔍 3️⃣ Check stock availability
+
+    //  Check stock availability
     for (const item of items) {
       const product = await Product.findById(item.product);
 
@@ -1070,28 +1071,30 @@ export const placeOrder = async (req, res) => {
       }
     }
 
-    // 💰 4️⃣ Calculate subtotal
+    //  Calculate subtotal
     const subtotal = items.reduce(
       (sum, item) => sum + item.price * item.quantity,
       0
     );
-
-    // 🎟️ 5️⃣ Apply coupon (only for cart)
+  
+    
+    //  Apply coupon (only for cart)
     let discount = 0;
     let appliedCoupon = null;
 
+
     const couponData = Cart?.coupons?.[Cart.coupons.length - 1];
+
+console.log(couponData);
 
     if (couponData?.appliedCoupon) {
       const coupon = await Coupon.findById(couponData.appliedCoupon);
-
       if (coupon && coupon.status === "active") {
         const now = new Date();
-
         if (
           (!coupon.startDate || now >= coupon.startDate) &&
           (!coupon.expiryDate || now <= coupon.expiryDate)
-        ) {
+           ) {
           if (subtotal >= coupon.minOrderValue) {
 
             if (coupon.type === "PERCENT") {
@@ -1118,15 +1121,17 @@ export const placeOrder = async (req, res) => {
         }
       }
     }
-
-    // 🧾 6️⃣ Tax & Shipping
+    console.log("hy");
+    
+    //  Tax & Shipping
     const tax = subtotal * 0.05;
     const shipping = subtotal > 500 ? 0 : 40;
 
     let total = subtotal + tax + shipping - discount;
     total = Math.max(0, total);
-
-    // 💳 7️⃣ Payment handling
+    console.log(total);
+    
+    //  Payment handling
     let paymentStatus = "pending";
 
     if (selectedPayment === "wallet") {
@@ -1151,16 +1156,17 @@ export const placeOrder = async (req, res) => {
       });
 
       paymentStatus = "paid";
+      
     }
+    if (selectedPayment === "razorpay") {
+      paymentStatus = "paid";
+    }
+
 
     // 📉 8️⃣ Reduce stock
-    for (const item of items) {
-      await Product.updateOne(
-        { _id: item.product },
-        { $inc: { stock: -item.quantity } }
-      );
-    }
-
+  console.log("ok");
+  
+    
     // 🧾 9️⃣ Create order
     const order = await Order.create({
       user: userid,
@@ -1195,10 +1201,19 @@ export const placeOrder = async (req, res) => {
         : null,
     });
 
+      for (const item of items) {
+      await Product.updateOne(
+        { _id: item.product },
+        { $inc: { stock: -item.quantity } }
+      );
+    }
+    console.log("hy");
+
     // 🧹 1️⃣0️⃣ Clear cart ONLY for cart checkout
     if (!directItem) {
       await cart.findOneAndDelete({ user: userid });
     }
+console.log(1);
 
     // 💳 1️⃣1️⃣ Transaction log
     await Transactions.create({
@@ -1211,6 +1226,7 @@ export const placeOrder = async (req, res) => {
       referenceId: order._id,
       description: "Order payment",
     });
+console.log(2);
 
     // ✅ 1️⃣2️⃣ Success response
     res.json({

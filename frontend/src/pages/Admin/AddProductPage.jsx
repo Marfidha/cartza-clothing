@@ -1,15 +1,17 @@
 import React from 'react'
 import { useState,useEffect } from 'react'
+import { useParams } from "react-router-dom";
 import axios from 'axios';
 import { useDispatch, useSelector } from "react-redux";
 import { fetchCategories } from "../../Redux/Slices/CategorySlice.js";
 import { fetchSubCategories } from "../../Redux/Slices/SubCategories.js";
 
 const AddProductPage = () => {
+
      const dispatch=useDispatch()
-
-     
-
+     const { id } = useParams();
+     const [product, setProduct] = useState(null);
+    
      const { items, loading, error } = useSelector((state) => state.categories);
      const {  subItems,  subLoading,  subError } = useSelector((state) => state.subcategories);
 
@@ -18,78 +20,95 @@ const AddProductPage = () => {
           dispatch(fetchSubCategories())
         },[dispatch])
 
+        useEffect(() => {
+        if(id){
+          fetchProduct();
+          }
+        },[id]);
 
-//       const CATEGORY_TYPES = {
-//   Men: [ "TSHIRT", "SHIRT","JEANS", "HOODIE", "JACKET", "SWEATSHIRT","TRACK_PANTS","SHORTS","BLAZER","KURTA"],
-//   Women: [ "KURTI", "TOP", "DRESS", "JEANS", "SAREE",  "LEHENGA",  "GOWN",  "TUNIC",  "SKIRT",  "PALAZZO",  "CO_ORD_SET",  "JUMPSUIT",  "ANARKALI"],
-//   Kids: ["TSHIRT",  "SHORTS",  "FROCK",  "JEANS",  "TRACK_PANTS",  "HOODIE",  "NIGHT_SUIT",  "ROMPER",  "DUNGAREE",  "SKIRT"]
-// };
+       const fetchProduct = async () => {
+             try {
+              const res = await axios.get(`http://localhost:3001/api/product/${id}`);
+              const data = res.data;
+              setproductname(data.productName);
+              setMainCategory(data.mainCategory?._id || "");
+              setSubCategory(data.subCategory?._id || "");
+              setDescription(data.description);
+              setColor(data.color);
+              setMaterial(data.material);
+              setproductPrice(data.price);
+              setStock(data.stock);
+              setproductStatus(data.status);
+              setSizes(data.size || []);
 
-  const [images,setimages]=useState([])
-  const [productName,setproductname]=useState()
-  const [mainCategory, setMainCategory] = useState("");
-    const [subCategory, setSubCategory] = useState("");
-  const [sizes, setSizes] = useState([])
-  const [description, setDescription] = useState("")
-  const [color, setColor] = useState("");
-  const [Material, setMaterial]=useState("")
-  const [productPrice,setproductPrice]=useState()
-  const [productStock,setStock]=useState()
-  const [productStatus,setproductStatus]=useState( true)
+              setProduct(data);
+              setExistingImages(data.image || []);
+              } catch (err) {
+                console.error(err);
+              }
+        };
 
-     const handleSizeChange = (size) => {
-    setSizes((prevSizes) => {
-      if (prevSizes.includes(size)) {
-        return prevSizes.filter((s) => s !== size);
-      } else {
-        return [...prevSizes, size];
-      }
-    });
-  };
+          const [images,setimages]=useState([])
+          const [productName,setproductname]=useState("")
+          const [mainCategory, setMainCategory] = useState("");
+          const [subCategory, setSubCategory] = useState("");
+          const [sizes, setSizes] = useState([])
+          const [description, setDescription] = useState("")
+          const [color, setColor] = useState("");
+          const [Material, setMaterial]=useState("")
+          const [productPrice,setproductPrice]=useState("")
+          const [productStock,setStock]=useState("")
+          const [productStatus,setproductStatus]=useState( true)
 
+          const handleSizeChange = (size) => {
+            setSizes((prevSizes) => {
+                if (prevSizes.includes(size)) {
+                  return prevSizes.filter((s) => s !== size);
+                } else {
+                  return [...prevSizes, size];
+                }
+              });
+            };
 
-  const filteredSubs = subItems.filter(
-  (sub) => sub.mainCategory?._id === mainCategory
-);
+            const [existingImages, setExistingImages] = useState([]);
 
-  
-//   const handleCategoryChange = (value) => {
-//   setproductCategory(value);
-//   setProductType(""); // reset type
-// };
+           const filteredSubs = subItems.filter( (sub) => sub.mainCategory?._id === mainCategory   );
 
+        const AddProduct=async ()=>{
+              try{
+              const frormdata=new FormData()
+              images.forEach((img) => {
+                frormdata.append("images", img) 
+              });
+              frormdata.append("productname",productName)
+              frormdata.append("mainCategory", mainCategory);
+              frormdata.append("subCategory", subCategory);
+              sizes.forEach((size) => {
+                frormdata.append("size", size);
+              });
+              frormdata.append("description",description)
+              frormdata.append("color",color)
+              frormdata.append("material",Material )
+              frormdata.append("price",Number(productPrice))
+              frormdata.append("stock",Number(productStock))
+              frormdata.append("status",productStatus?"true":"false")
 
+              console.log([...frormdata.entries()]);
 
-  const AddProduct=async ()=>{
-    try{
-    const frormdata=new FormData()
-       
-    images.forEach((img) => {
-      frormdata.append("images", img) 
-     });
-     frormdata.append("productname",productName)
-    frormdata.append("mainCategory", mainCategory);
-     frormdata.append("subCategory", subCategory);
-     sizes.forEach((size) => {
-       frormdata.append("size", size);
-     });
-     frormdata.append("description",description)
-     frormdata.append("color",color)
-     frormdata.append("material",Material )
-     frormdata.append("price",Number(productPrice))
-     frormdata.append("stock",Number(productStock))
-     frormdata.append("status",productStatus?"true":"false")
-
-     console.log([...frormdata.entries()]);
-
-     await axios.post("http://localhost:3001/api/product/addproduct" , frormdata )
-     alert("product added")
-     frormdata()
-  }catch(error){
- console.error("Add product error:", error.response?.data || error.message);
-    alert("Failed to add product");
-  }
-  } 
+                  if(id){
+                  const token = localStorage.getItem("token");
+                  await axios.put( `http://localhost:3001/api/product/product/${id}`, frormdata, { headers: { Authorization: `Bearer ${token}`,},});
+                  alert("Product updated successfully");
+                  }else{
+                  await axios.post("http://localhost:3001/api/product/addproduct" , frormdata )
+                  alert("product added")
+                  frormdata()
+                  }
+            }catch(error){
+                  console.error("Add product error:", error.response?.data || error.message);
+                  alert("Failed to add product");
+            }
+        } 
 
 
   return (
@@ -102,13 +121,6 @@ const AddProductPage = () => {
       <h1 className="text-2xl font-bold text-gray-800">Add Product</h1>
       <p className="text-gray-500 text-sm">Create a new product listing</p>
     </div>
-
-    <button
-      onClick={AddProduct}
-      className="bg-black text-white px-6 py-2 rounded-lg shadow hover:bg-gray-800"
-    >
-      Save Product
-    </button>
   </div>
 
 
@@ -120,6 +132,7 @@ const AddProductPage = () => {
 
       <input
         placeholder="Product Name"
+        value={productName || ""}
         className="border rounded-lg p-3"
         onChange={(e)=>setproductname(e.target.value)}
       />
@@ -159,18 +172,21 @@ const AddProductPage = () => {
 
       <input
         placeholder="Color"
+        value={color}
         className="border rounded-lg p-3"
         onChange={(e)=>setColor(e.target.value)}
       />
         <div>
         <label className="text-sm font-medium text-gray-600">Material</label>
-        <input type="text" placeholder="100% Polyester" className="mt-1 w-full border rounded p-2" onChange={(e) => setMaterial(e.target.value)}/>
+        <input value={Material}
+        type="text" placeholder="100% Polyester" className="mt-1 w-full border rounded p-2" onChange={(e) => setMaterial(e.target.value)}/>
       </div> 
 
     </div>
 
     <textarea
       placeholder="Description"
+      value={description}
       className="border rounded-lg p-3 mt-4 w-full"
       onChange={(e)=>setDescription(e.target.value)}
     />
@@ -187,6 +203,18 @@ const AddProductPage = () => {
       className="border rounded-lg p-3 w-full"
       onChange={(e)=>setimages(Array.from(e.target.files))}
     />
+    {existingImages.length > 0 && (
+  <div className="flex gap-3 mt-4 flex-wrap">
+    {existingImages.map((img,i)=>(
+      <img
+        key={i}
+        src={img.url}
+        alt="product"
+        className="w-20 h-20 object-cover rounded border"
+      />
+    ))}
+  </div>
+)}
     
   </div>
 
@@ -197,6 +225,7 @@ const AddProductPage = () => {
 
     <input
       type="number"
+        value={productPrice}
       placeholder="Product Price"
       className="border rounded-lg p-3 w-full md:w-1/3"
       onChange={(e)=>setproductPrice(e.target.value)}
@@ -230,6 +259,7 @@ const AddProductPage = () => {
     <div className="grid md:grid-cols-2 gap-4">
      <input
        type="number"
+       value={productStock}
        placeholder="Stock Quantity"
       className="border rounded-lg p-3"
       onChange={(e)=>setStock(e.target.value)}/>
@@ -247,7 +277,9 @@ const AddProductPage = () => {
   </div>
 
 </div>
-  <button onClick={()=> AddProduct()} className="w-full bg-[#7A6660] text-white py-2 rounded-lg hover:bg-[#5f4c46] transition"> Save Product</button>
+  <button onClick={()=> AddProduct()} className="w-full bg-[#7A6660] text-white py-2 rounded-lg hover:bg-[#5f4c46] transition"> 
+     {id ? "Edit Product" : "Add Product"}
+  </button>
     
    
 
