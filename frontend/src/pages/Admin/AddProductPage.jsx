@@ -5,12 +5,15 @@ import axios from 'axios';
 import { useDispatch, useSelector } from "react-redux";
 import { fetchCategories } from "../../Redux/Slices/CategorySlice.js";
 import { fetchSubCategories } from "../../Redux/Slices/SubCategories.js";
+import useAlert from "../../alerts/hooks/useAlert";
+
 
 const AddProductPage = () => {
 
      const dispatch=useDispatch()
      const { id } = useParams();
      const [product, setProduct] = useState(null);
+     const { showToast, showSnackbar, showModal } = useAlert();
     
      const { items, loading, error } = useSelector((state) => state.categories);
      const {  subItems,  subLoading,  subError } = useSelector((state) => state.subcategories);
@@ -75,6 +78,10 @@ const AddProductPage = () => {
            const filteredSubs = subItems.filter( (sub) => sub.mainCategory?._id === mainCategory   );
 
         const AddProduct=async ()=>{
+          if(images.length > 4){
+              showToast("Maximum 4 images allowed", "error");
+              return;
+            }
               try{
               const frormdata=new FormData()
               images.forEach((img) => {
@@ -98,15 +105,28 @@ const AddProductPage = () => {
                   if(id){
                   const token = localStorage.getItem("token");
                   await axios.put( `http://localhost:3001/api/product/product/${id}`, frormdata, { headers: { Authorization: `Bearer ${token}`,},});
-                  alert("Product updated successfully");
+                   showToast("Product updated successfully", "success");
                   }else{
                   await axios.post("http://localhost:3001/api/product/addproduct" , frormdata )
-                  alert("product added")
-                  frormdata()
+                  showToast("Product added successfully", "success");
+                  setimages([]);
+                  setproductname("");
+                  setMainCategory("");
+                  setSubCategory("");
+                  setSizes([]);
+                  setDescription("");
+                  setColor("");
+                  setMaterial("");
+                  setproductPrice("");
+                  setStock("");
+                  setproductStatus(true);
                   }
             }catch(error){
                   console.error("Add product error:", error.response?.data || error.message);
-                  alert("Failed to add product");
+                  showToast(
+                    error.response?.data?.message || "Failed to add product",
+                    "error"
+                  );
             }
         } 
 
@@ -201,7 +221,12 @@ const AddProductPage = () => {
       type="file"
       multiple
       className="border rounded-lg p-3 w-full"
-      onChange={(e)=>setimages(Array.from(e.target.files))}
+      onChange={(e)=>{setimages(Array.from(e.target.files));
+         if (files.length > 4) {
+            showToast("You can upload maximum 4 images only", "error");
+            return;
+          }
+      }}
     />
     {existingImages.length > 0 && (
   <div className="flex gap-3 mt-4 flex-wrap">

@@ -67,7 +67,7 @@ const handleSearchSubmit = (e) => {
               <h1 className={`text-2xl font-black tracking-tighter transition-colors duration-500 ${
                 scrolled || !isCategoryPage ? 'text-[#1E293B]' : 'text-white'
               }`}>
-                CARTZA.
+                CARTZA
               </h1>
             </a>
             

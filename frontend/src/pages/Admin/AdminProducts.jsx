@@ -26,6 +26,20 @@ function AdminProducts() {
     setproduct(res.data);
   };
 
+const totalProducts = product.filter(p => !p.isDeleted).length;
+
+const activeProducts = product.filter(
+  p => p.status === true && !p.isDeleted
+).length;
+
+const lowStock = product.filter(
+  p => p.stock > 0 && p.stock < 10 && !p.isDeleted
+).length;
+
+const outOfStock = product.filter(
+  p => p.stock === 0 && !p.isDeleted
+).length;
+
 
   useEffect(()=>{
   fetchProducts()
@@ -45,9 +59,10 @@ const filteredProducts = product.filter((item) => {
 
   /* 2️⃣ Category filter */
   const matchCategory =
-    !selectedCategoryfilter ||
-    selectedCategoryfilter === "All" ||
-    item.category?.toLowerCase() === selectedCategoryfilter.toLowerCase();
+  !selectedCategoryfilter ||
+  selectedCategoryfilter === "All" ||
+  item.mainCategory?.name?.toLowerCase() ===
+  selectedCategoryfilter.toLowerCase();
 
   /* 3️⃣ Status filter */
   const matchStatus = (() => {
@@ -90,34 +105,6 @@ const restoredproduct= async (id)=>{
 
 
 
-  // const handleedit = async (product)=>{
-  //   setselectedproduct(product)
-  //    seteditmodal(true)
-  // }
-
-//     const handleUpdateImage= async()=>{
-
-//       console.log(selectOneProduct._id)
-      
-//       const formdata=new FormData()
-//       formdata.append("image",newImage)
-//       formdata.append("index",selectedimageindex)
-//       console.log({
-//   productId: selectOneProduct?._id,
-//   index: selectedimageindex,
-//   file: newImage,
-// });
-//  const token= localStorage.getItem("token")
-//       await axios.post(`http://localhost:3001/api/product/${ selectOneProduct._id }/new-img/`,formdata
-//         ,{headers:{Authorization:`Bearer ${token}`,}},
-      
-        
-//       )
-//     setnewImage(null)
-//     setselectedimageindex(null)
-//     setoneImagemodal(null)
-//     }
-
 
 
   return (
@@ -132,10 +119,10 @@ const restoredproduct= async (id)=>{
 
       <div className='w-full h-[28%]'>
       <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 gap-6 mt-6">
-        <Card title="Total Products" countt="6" smallp="All inventory items"/>
-        <Card title="Active Products" countt="5" smallp="Currently selling"/>
-        <Card title="Low Stock" countt="2" smallp="Less than 10 items"/>
-        <Card title="Out of Stock" countt="1" smallp="Need restocking"/>
+          <Card title="Total Products" countt={totalProducts} smallp="All inventory items"/>
+          <Card title="Active Products" countt={activeProducts} smallp="Currently selling"/>
+          <Card title="Low Stock" countt={lowStock} smallp="Less than 10 items"/>
+          <Card title="Out of Stock" countt={outOfStock} smallp="Need restocking"/>
       </div>
       </div>
 
@@ -219,7 +206,23 @@ const restoredproduct= async (id)=>{
                       <td  className="p-3 text-black">{product.mainCategory?.name}</td>
                       <td  className="p-3 text-black">{product.price}</td>
                       <td  className="p-3 ">
-                         <span className="bg-blue-100 text-blue-600 px-3 py-1 rounded-full text-sm"> {product.stock}</span>
+                          {product.stock === 0 && (
+                          <span className="bg-red-100 text-red-700 px-3 py-1 rounded-full text-sm">
+                            Out of Stock
+                          </span>
+                        )}
+
+                        {product.stock > 0 && product.stock < 10 && (
+                          <span className="bg-yellow-100 text-yellow-700 px-3 py-1 rounded-full text-sm">
+                            Low Stock ({product.stock})
+                          </span>
+                        )}
+
+                        {product.stock >= 10 && (
+                          <span className="bg-green-100 text-green-700 px-3 py-1 rounded-full text-sm">
+                            In Stock ({product.stock})
+                          </span>
+                        )}
                       </td>
                       <td  className="p-3">
                         <span 

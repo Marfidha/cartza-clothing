@@ -1,6 +1,8 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { useNavigate ,useParams } from "react-router-dom";
+import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
+import useAlert from "../../alerts/hooks/useAlert";
 
 // Inline SVG Icons to resolve dependency issues
 const IconChevronLeft = () => (
@@ -13,6 +15,7 @@ const IconCamera = () => (
 const OneProductDetails = () => {
     const navigate=useNavigate()
   const { id } = useParams();
+  const { showToast, showSnackbar, showModal } = useAlert();
 
   const [product, setProduct] = useState(null);
   const [editmodal, seteditmodal] = useState(false);
@@ -27,29 +30,44 @@ const OneProductDetails = () => {
     try {
       const res = await axios.get(`http://localhost:3001/api/product/${id}`);
       setProduct(res.data);
-    } catch (err) {
-      console.error(err);
-    }
-  };
+    } catch (err) {console.error(err);}
+   };
 
   useEffect(() => {
     fetchProduct();
   }, [id]);
 
+
+
+  const confirmDelete = (id) => {
+
+  showModal({
+    title: "Delete Product",
+    message: "Are you sure you want to delete this product? This action cannot be undone.",
+    type: "danger",
+
+    onConfirm: () => {
+      handledelete(id);
+    }
+  });
+
+};
   // Delete product
   const handledelete = async (id) => {
     try {
       const token = localStorage.getItem("token");
-      const res = await axios.put(
-        `http://localhost:3001/api/product/${id}/delete`,
-        {},
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
+      const res = await axios.put( `http://localhost:3001/api/product/${id}/delete`,{}, { headers: { Authorization: `Bearer ${token}` } });
+      showToast(res.data.message || "Product deleted", "success");
       console.log(res.data.message);
+      navigate("/dashboard/products");
       fetchProduct();
-    } catch (err) {
-      console.error(err.response?.data);
-    }
+      } catch (err) {
+        console.error(err.response?.data);
+        showToast(
+          err.response?.data?.message || "Failed to delete product",
+          "error"
+        );
+      }
   };
 
   // Edit modal open
@@ -72,15 +90,42 @@ const OneProductDetails = () => {
         formdata,
         { headers: { Authorization: `Bearer ${token}` } }
       );
-
+        showToast("Image updated successfully", "success");
       setnewImage(null);
       setselectedimageindex(null);
       setoneImagemodal(null);
       fetchProduct();
     } catch (err) {
       console.error(err);
+      showToast("Image update failed", "error");
     }
   };
+
+
+
+
+  const handleDragEnd = async (result) => {
+  if (!result.destination) return;
+
+  const items = Array.from(product.image);
+
+  const [moved] = items.splice(result.source.index, 1);
+  items.splice(result.destination.index, 0, moved);
+
+  setProduct({ ...product, image: items });
+
+  try {
+    const token = localStorage.getItem("token");
+
+    await axios.put(
+      `http://localhost:3001/api/product/${product._id}/reorder-images`,
+      { images: items },
+      { headers: { Authorization: `Bearer ${token}` } }
+    );
+  } catch (err) {
+    console.error(err);
+  }
+};
 
   if (!product) {
     return (
@@ -93,21 +138,33 @@ const OneProductDetails = () => {
   }
 
   return (
-    <div className="max-w-6xl mx-auto px-6 py-12 antialiased text-slate-900 bg-white">
+    <div className="max-w-6xl mx-auto px-6 py-12 antialiased text-slate-900 ">
       
       {/* Navigation */}
-      <button className="flex items-center text-gray-400 hover:text-black transition-colors mb-8 text-sm group">
+      <button  onClick={() => navigate(-1)} className="flex items-center text-gray-400 hover:text-black transition-colors mb-8 text-sm group">
         <IconChevronLeft />
-        <span className="ml-1 tracking-tight">Back to Inventory</span>
+        
       </button>
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-16">
         
         {/* Left Column: Visual Assets */}
-        <div className="lg:col-span-7">
+        <DragDropContext onDragEnd={handleDragEnd}>
+        <Droppable droppableId="images" direction="horizontal">
+        {(provided) => (
+        <div className="lg:col-span-7"
+        {...provided.droppableProps}
+        ref={provided.innerRef}
+        >
           <div className="grid grid-cols-2 gap-4">
+            
             {product.image?.map((img, i) => (
+               <Draggable key={img._id} draggableId={img._id} index={i}>
+            {(provided) => (
               <div 
+               ref={provided.innerRef}
+                {...provided.draggableProps}
+                {...provided.dragHandleProps}
                 key={i} 
                 className={`group relative aspect-square overflow-hidden bg-gray-50 rounded-sm cursor-pointer border border-gray-100 ${i === 0 ? 'col-span-2' : ''}`}
                 onClick={() => {
@@ -126,9 +183,17 @@ const OneProductDetails = () => {
                     </div>
                 </div>
               </div>
-            ))}
+            )}
+               </Draggable>
+             ))}
+           {provided.placeholder}
+              
+           
           </div>
         </div>
+         )}
+     </Droppable>
+  </DragDropContext>
 
         {/* Right Column: Product Content */}
         <div className="lg:col-span-5 flex flex-col">
@@ -161,7 +226,7 @@ const OneProductDetails = () => {
                     <p className="text-[10px] uppercase tracking-widest text-gray-400 mb-3 font-bold">Standard Sizing</p>
                     <div className="flex flex-wrap gap-2">
                         {product.size?.map(s => (
-                            <span key={s} className="min-w-[40px] text-center px-2 py-2 border border-gray-200 text-[10px] font-bold rounded-sm uppercase">
+                            <span key={s} className="min-w-40px text-center px-2 py-2 border border-gray-200 text-[10px] font-bold rounded-sm uppercase">
                                 {s}
                             </span>
                         ))}
@@ -186,10 +251,10 @@ const OneProductDetails = () => {
                   Edit Information
                 </button>
                 <button
-                  onClick={() => handledelete(product._id)}
+                  onClick={() => confirmDelete(product._id)}
                   className="w-full py-4 text-red-400 text-[10px] uppercase tracking-[0.2em] font-bold hover:text-red-600 transition-all"
                 >
-                  Remove from Database
+                  Delete Product
                 </button>
               </div>
             </section>
@@ -226,7 +291,7 @@ const OneProductDetails = () => {
                 <button
                     onClick={handleUpdateImage}
                     disabled={!newImage}
-                    className={`flex-[2] py-4 text-[10px] uppercase tracking-widest font-bold transition-all rounded-sm ${newImage ? 'bg-black text-white shadow-lg' : 'bg-gray-100 text-gray-300 cursor-not-allowed'}`}
+                    className={`flex-2 py-4 text-[10px] uppercase tracking-widest font-bold transition-all rounded-sm ${newImage ? 'bg-black text-white shadow-lg' : 'bg-gray-100 text-gray-300 cursor-not-allowed'}`}
                 >
                     Update Asset
                 </button>

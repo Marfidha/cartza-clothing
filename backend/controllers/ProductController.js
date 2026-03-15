@@ -6,6 +6,10 @@ import MainCategory from "../models/MainCategory.js";
 
 export const addproduct= async (req,res)=>{
      try{
+
+       console.log("FILES:", req.files);
+    console.log("BODY:", req.body);
+
         if (!req.files || req.files.length === 0) {
         return res.status(400).json({ message: "No images uploaded" });
         }
@@ -138,6 +142,8 @@ export const updateProduct = async (req, res) => {
 
 export const softdelete =async (req ,res)=>{
      try{
+      console.log("hy");
+      
  const product = await Product.findByIdAndUpdate(
   req.params.id,
   {
@@ -236,6 +242,27 @@ export const replaceoneimage=async (req,res)=>{
     }
   
 }
+
+
+
+
+export const reorderImages = async (req, res) => {
+  try {
+
+    const { images } = req.body;
+
+    const product = await Product.findById(req.params.id);
+
+    product.image = images;
+
+    await product.save();
+
+    res.json({ message: "Image order updated" });
+
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
 
 
 export const Oneproduct=async (req, res)=>{
