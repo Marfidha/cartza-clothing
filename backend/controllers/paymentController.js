@@ -1,5 +1,5 @@
 import crypto from "crypto";
-import razorpay from "../config/RazorPay.js";
+import razorpay from "../config/razorpay.js";
 
 export const createRazorpayOrder = async (req, res) => {
 
