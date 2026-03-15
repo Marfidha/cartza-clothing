@@ -44,7 +44,7 @@ app.use("/api/payment", paymentRoutes);
 
 
 
-const port=process.env.PORT
+const port=process.env.PORT || 3001
 
 app.listen(port,()=>{ 
     console.log(`server is running at port ${port}`);

@@ -1,4 +1,3 @@
-import Admin from "../Models/Admin.js"
 import express from "express"
 import  authMiddleware  from "../middlewere/authMiddleware.js"
 import { adminlogin, checkauth } from "../controllers/AuthController.js"
