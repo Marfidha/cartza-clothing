@@ -13,7 +13,7 @@ import Order from "../models/Order.js"
 import Product from "../models/Product.js"
 import Feedback from "../models/Feedback.js";
 import Transactions from "../models/Transactions.js";
-import razorpay from "../config/razorpay.js";
+
 
 
 
