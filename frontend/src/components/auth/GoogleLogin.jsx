@@ -4,6 +4,7 @@ import {signInWithPopup} from "firebase/auth"
 import axios from 'axios';
 import { Auth ,googleProvider } from '../../firebase'
 import { useNavigate } from "react-router-dom";
+import API from '../../../config/api';
 
 
 function GoogleLogin() {
@@ -16,7 +17,7 @@ function GoogleLogin() {
         setLoading(true);
     const result =await signInWithPopup(Auth,googleProvider)
     const user =result.user
-    const res= await axios.post("http://localhost:3001/api/user/auth/googlelogin",{
+    const res= await API.post("/api/user/auth/googlelogin",{
           uid: user.uid,
           email: user.email,
           name: user.displayName,
