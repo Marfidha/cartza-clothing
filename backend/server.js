@@ -27,7 +27,8 @@ connectDB()
 
 app.use(
   cors({
-    origin: ["http://localhost:5173","https://cartza-clothing.onrender.com"],
+    origin: ["http://localhost:5173",
+      "https://cartza-clothing-1.onrender.com"],
     methods: ["GET", "POST", "PUT","PATCH", "DELETE"],
     credentials: true,
   })
