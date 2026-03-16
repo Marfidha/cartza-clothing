@@ -1,4 +1,5 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import API from "../../../config/api";
 import axios from "axios";
 
 
@@ -6,8 +7,8 @@ import axios from "axios";
 export const fetchSubCategories = createAsyncThunk(
   "subcategories/fetch",
   async () => {
-    const res = await axios.get(
-      "http://localhost:3001/api/admin/subcategories"
+    const res = await API.get(
+      "/api/admin/subcategories"
     );
     return res.data;
   }

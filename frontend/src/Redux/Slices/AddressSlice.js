@@ -1,4 +1,5 @@
 import { createSlice,createAsyncThunk } from "@reduxjs/toolkit";
+import API from "../../../config/api";
 import axios  from "axios";
 
 
@@ -7,7 +8,7 @@ export const addAddress=createAsyncThunk("address/addressdata" ,async(addressdat
   const token=localStorage.getItem("token")
   if(!token) return thunkAPI.rejectWithValue("No token found");
     try{
-      const response= await axios.post("http://localhost:3001/api/user/auth/address", addressdata,
+      const response= await API.post("/api/user/auth/address", addressdata,
          {headers:{Authorization:`Bearer ${token}`}})
         return response.data.data;
     }catch(error){
@@ -23,7 +24,7 @@ export const addAddress=createAsyncThunk("address/addressdata" ,async(addressdat
 export const getaddresses=createAsyncThunk("address/getaddresses" ,async(_,thunkAPI)=>{
     try{
         const token=localStorage.getItem("token")
-        const response=await axios.get("http://localhost:3001/api/user/auth/address",{headers:{Authorization:`Bearer ${token}`}})
+        const response=await API.get("/api/user/auth/address",{headers:{Authorization:`Bearer ${token}`}})
         return response.data;
     }catch(error){
         return thunkAPI.rejectWithValue(error.response.data.message || "Failed to fetch addresses");
@@ -34,7 +35,7 @@ export const getaddresses=createAsyncThunk("address/getaddresses" ,async(_,thunk
 export const updateAddress = createAsyncThunk( "address/updateAddress", async ({ id, data }, { rejectWithValue }) => {
     try {
       const token = localStorage.getItem("token");
-      const res = await axios.put( `http://localhost:3001/api/user/auth/address/${id}`,  data,  {  headers: { Authorization: `Bearer ${token}` }, }  );
+      const res = await API.put( `/api/user/auth/address/${id}`,  data,  {  headers: { Authorization: `Bearer ${token}` }, }  );
       return res.data.address;
     } catch (err) {
       return rejectWithValue(
@@ -49,7 +50,7 @@ export const updateAddress = createAsyncThunk( "address/updateAddress", async ({
 export const deleteAddress = createAsyncThunk("address/deleteAddress",async (id, { rejectWithValue }) => {
     try {
       const token = localStorage.getItem("token");
-      const res = await axios.delete( `http://localhost:3001/api/user/auth/deleteaddress/${id}`, {headers: { Authorization: `Bearer ${token}`},});
+      const res = await API.delete( `/api/user/auth/deleteaddress/${id}`, {headers: { Authorization: `Bearer ${token}`},});
       return res.data.id;
     } catch (err) {
       return rejectWithValue(

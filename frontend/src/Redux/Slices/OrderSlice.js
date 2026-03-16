@@ -1,4 +1,5 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import API from "../../../config/api";
 import axios from "axios";
 
 
@@ -6,8 +7,8 @@ export const createOrder = createAsyncThunk(
   "order/createOrder",
   async (orderData, thunkAPI) => {
     const token = localStorage.getItem("token");
-    const response = await axios.post(
-      "http://localhost:3001/api/user/auth/place-order",
+    const response = await API.post(
+      "/api/user/auth/place-order",
       orderData,
       {headers:{Authorization:`Bearer ${token}`}}
     );
@@ -21,7 +22,7 @@ export const fetchUserOrders = createAsyncThunk(
   async (_, { rejectWithValue }) => {
     try {
       const token = localStorage.getItem("token");
-      const res = await axios.get(`http://localhost:3001/api/user/auth/orders`, {
+      const res = await API.get(`/api/user/auth/orders`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       console.log(res.data);
@@ -40,8 +41,8 @@ export const fetchOrderDetailsbyid = createAsyncThunk(
     try {
       const token = localStorage.getItem("token");
 
-      const res = await axios.get(
-        `http://localhost:3001/api/user/auth/orders/${orderId}`,
+      const res = await API.get(
+        `/api/user/auth/orders/${orderId}`,
         {
           headers: { Authorization: `Bearer ${token}` },
         }
@@ -62,7 +63,7 @@ export const cancelOrderById = createAsyncThunk(
   async (orderId, { rejectWithValue }) => {
     try {
       const token = localStorage.getItem("token");
-      const { data } = await axios.put(`http://localhost:3001/api/user/auth/cancel/${orderId}`,{},{  headers: {    Authorization: `Bearer ${token}`,  }, } );
+      const { data } = await API.put(`/api/user/auth/cancel/${orderId}`,{},{  headers: {    Authorization: `Bearer ${token}`,  }, } );
 
       return data.order;
 

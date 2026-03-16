@@ -8,7 +8,6 @@ import {
   Calendar, 
   ChevronRight, 
   ShoppingBag, 
-  Clock, 
   XCircle,
   Loader2
 } from "lucide-react";
@@ -113,9 +112,7 @@ const OrdersPage = () => {
                           alt=""
                           className="w-16 h-16 object-cover rounded-xl border border-slate-100 shadow-sm"
                         />
-                        {/* <span className="absolute -top-1.5 -right-1.5 bg-slate-900 text-white text-[10px] font-bold w-5 h-5 flex items-center justify-center rounded-full border-2 border-white">
-                          {item.quantity}
-                        </span> */}
+                       
                       </div>
 
                       <div className="flex-1 min-w-0">
@@ -162,10 +159,6 @@ const OrdersPage = () => {
                       Cancel
                     </button>
                   )}
-                  {/* <button className="flex items-center gap-1.5 px-3 py-2 border border-slate-200 rounded-xl text-[10px] font-bold uppercase tracking-widest text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition-all">
-                    <Clock size={14} />
-                    Track
-                  </button> */}
                 </div>
               </div>
             </div>
@@ -183,129 +176,3 @@ const OrdersPage = () => {
 };
 
 export default OrdersPage;
-
-// import React, { useEffect } from "react";
-// import { useNavigate } from "react-router-dom";
-// import { useDispatch, useSelector } from "react-redux";
-// import { fetchUserOrders ,cancelOrderById} from "../../Redux/Slices/OrderSlice";
-
-// const OrdersPage = () => {
-//      const navigate = useNavigate();
-//   const dispatch = useDispatch();
-
-//   const { orders, loading } = useSelector((state) => state.order);
-
-//   useEffect(() => {
-//     dispatch(fetchUserOrders());
-//   }, [dispatch]);
-  
-
-//   if (loading) return <h2>Loading...</h2>;
- 
-//   return (
-//     <>
- 
-//   <div className="min-h-screen bg-gray-50 py-8 px-4">
-//     <div className="max-w-4xl mx-auto space-y-4">
-
-//       <h2 className="text-2xl font-bold mb-6">My Orders</h2>
-
-//       {/* No Orders */}
-//       {orders?.length === 0 && <p>No orders found</p>}
-
-//       {/* LOOP ORDERS */}
-//       {orders?.map((order) => (
-//         <div
-//           key={order._id}
-//           className="bg-white rounded-xl shadow-sm p-4 hover:shadow-md transition"
-//         >
-
-//           {/* CLICK AREA */}
-//           <div
-//             onClick={() => navigate(`/orders/${order._id}`)}
-//             className="cursor-pointer"
-//           >
-
-//             {/* ITEMS LIST */}
-//             {order.items?.map((item) => (
-//               <div key={item._id} className="flex gap-4 items-center mb-3">
-
-//                 <img
-//                   src={item.image || "https://via.placeholder.com/100"}
-//                   alt=""
-//                   className="w-20 h-20 object-cover rounded-lg"
-//                 />
-
-//                 <div className="flex-1">
-//                   <h4 className="font-semibold">{item.name}</h4>
-
-//                   <p className="text-sm text-gray-500">
-//                     Qty: {item.quantity}
-//                   </p>
-
-//                   <p className="text-sm text-gray-500">
-//                     ₹{item.price}
-//                   </p>
-//                 </div>
-//               </div>
-//             ))}
-
-//             {/* ORDER INFO */}
-//             <div className="flex justify-between items-center mt-2">
-
-//               <div>
-//                 <p className="text-sm text-gray-500">
-//                   Order ID: {order._id}
-//                 </p>
-
-//                 <p className="text-sm text-gray-500">
-//                   {new Date(order.createdAt).toLocaleDateString()}
-//                 </p>
-
-//                 <p className="font-medium mt-1">
-//                   Total: ₹{order.totalAmount}
-//                 </p>
-//               </div>
-
-//               <span
-//                 className={`px-3 py-1 text-sm font-semibold rounded-full
-//                   ${
-//                     order.orderStatus === "delivered"
-//                       ? "bg-green-100 text-green-700"
-//                       : order.orderStatus === "cancelled"
-//                       ? "bg-red-100 text-red-700"
-//                       : "bg-yellow-100 text-yellow-700"
-//                   }`}
-//               >
-//                 {order.orderStatus}
-//               </span>
-//             </div>
-
-//           </div>
-
-//           {/* CANCEL BUTTON */}
-//           {order.orderStatus === "processing" && (
-//             <button
-//               onClick={async (e) => {
-//   e.stopPropagation();
-//   if (!window.confirm("Cancel this order?")) return;
-//   await dispatch(cancelOrderById(order._id));
-//   dispatch(fetchUserOrders());
-// }}
-//               className="w-full mt-4 bg-red-500 hover:bg-red-600 text-white py-2 rounded-lg font-semibold transition"
-//             >
-//               Cancel Order
-//             </button>
-//           )}
-
-//         </div>
-//       ))}
-
-//     </div>
-//   </div>
-
-//     </>
-//   )
-// }
-
-// export default OrdersPage

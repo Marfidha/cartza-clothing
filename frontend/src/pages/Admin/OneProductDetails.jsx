@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate ,useParams } from "react-router-dom";
 import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
 import useAlert from "../../alerts/hooks/useAlert";
+import API from "../../../config/api";
 
 // Inline SVG Icons to resolve dependency issues
 const IconChevronLeft = () => (
@@ -28,7 +29,7 @@ const OneProductDetails = () => {
   // Fetch product
   const fetchProduct = async () => {
     try {
-      const res = await axios.get(`http://localhost:3001/api/product/${id}`);
+      const res = await API.get(`/api/product/${id}`);
       setProduct(res.data);
     } catch (err) {console.error(err);}
    };
@@ -56,7 +57,7 @@ const OneProductDetails = () => {
   const handledelete = async (id) => {
     try {
       const token = localStorage.getItem("token");
-      const res = await axios.put( `http://localhost:3001/api/product/${id}/delete`,{}, { headers: { Authorization: `Bearer ${token}` } });
+      const res = await API.put( `/api/product/${id}/delete`,{}, { headers: { Authorization: `Bearer ${token}` } });
       showToast(res.data.message || "Product deleted", "success");
       console.log(res.data.message);
       navigate("/dashboard/products");
@@ -85,8 +86,8 @@ const OneProductDetails = () => {
 
       const token = localStorage.getItem("token");
 
-      await axios.post(
-        `http://localhost:3001/api/product/${product._id}/new-img/`,
+      await API.post(
+        `/api/product/${product._id}/new-img/`,
         formdata,
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -117,8 +118,8 @@ const OneProductDetails = () => {
   try {
     const token = localStorage.getItem("token");
 
-    await axios.put(
-      `http://localhost:3001/api/product/${product._id}/reorder-images`,
+    await API.put(
+      `/api/product/${product._id}/reorder-images`,
       { images: items },
       { headers: { Authorization: `Bearer ${token}` } }
     );
@@ -321,215 +322,3 @@ const Spec = ({ label, value }) => (
 );
 
 export default OneProductDetails;
-
-// import axios from "axios";
-// import React, { useEffect, useState } from "react";
-// import { useParams } from "react-router-dom";
-// import { MdEdit, MdDelete } from "react-icons/md";
-
-// const OneProductDetails = () => {
-
-//   const { id } = useParams();
-
-//   const [product, setProduct] = useState(null);
-//   const [editmodal, seteditmodal] = useState(false);
-//   const [selectedproduct, setselectedproduct] = useState(null);
-
-//   const [oneImagemodal, setoneImagemodal] = useState(null);
-//   const [selectedimageindex, setselectedimageindex] = useState(null);
-//   const [newImage, setnewImage] = useState(null);
-
-//   // Fetch product
-//   const fetchProduct = async () => {
-//     try {
-//       const res = await axios.get(`http://localhost:3001/api/product/${id}`);
-//       setProduct(res.data);
-//     } catch (err) {
-//       console.error(err);
-//     }
-//   };
-
-//   useEffect(() => {
-//     fetchProduct();
-//   }, []);
-
-
-
-
-
-  
-//   // Delete product
-//   const handledelete = async (id) => {
-//     try {
-//       const token = localStorage.getItem("token");
-//       const res = await axios.put(   `http://localhost:3001/api/product/${id}/delete`, {}, { headers: { Authorization: `Bearer ${token}` } } );
-//       alert(res.data.message);
-//       fetchProduct();
-//     } catch (err) {
-//       console.error(err.response?.data);
-//     }
-//   };
-
-//   // Edit modal open
-//   const handleedit = (product) => {
-//     setselectedproduct(product);
-//     seteditmodal(true);
-//   };
-
-//   // Update image
-//   const handleUpdateImage = async () => {
-//     try {
-
-//       const formdata = new FormData();
-//       formdata.append("image", newImage);
-//       formdata.append("index", selectedimageindex);
-
-//       const token = localStorage.getItem("token");
-
-//       await axios.post(
-//         `http://localhost:3001/api/product/${product._id}/new-img/`,
-//         formdata,
-//         { headers: { Authorization: `Bearer ${token}` } }
-//       );
-
-//       setnewImage(null);
-//       setselectedimageindex(null);
-//       setoneImagemodal(null);
-
-//       fetchProduct();
-
-//     } catch (err) {
-//       console.error(err);
-//     }
-//   };
-
-//   if (!product) return <p className="p-6">Loading...</p>;
-
-//   return (
-//     <div className="p-6 max-w-4xl mx-auto">
-
-//       {/* Product Name */}
-//       <div className="mb-4">
-//         <h1 className="text-2xl font-bold">{product.productName}</h1>
-
-//         <span
-//           className={`inline-block mt-2 px-3 py-1 rounded-full text-xs font-semibold
-//           ${product.status
-//               ? "bg-green-100 text-green-700"
-//               : "bg-red-100 text-red-700"
-//             }`}
-//         >
-//           {product.status ? "Active" : "Disabled"}
-//         </span>
-//       </div>
-
-//       {/* Images */}
-//       <div className="flex gap-4 mb-6">
-//         {product.image?.map((img, i) => (
-//           <img
-//             key={i}
-//             src={img.url}
-//             alt="product"
-//             onClick={() => {
-//               setselectedimageindex(i);
-//               setoneImagemodal(img);
-//             }}
-//             className="w-40 h-40 object-cover rounded-lg border cursor-pointer"
-//           />
-//         ))}
-//       </div>
-
-//       {/* Details */}
-//       <div className="grid grid-cols-2 gap-4 text-sm">
-
-//         <Info label="SKU" value={product.sku} />
-//         <Info label="Category" value={product.category} />
-//         <Info label="Price" value={`₹${product.price}`} />
-//         <Info label="Stock" value={product.stock} />
-//         <Info label="Color" value={product.color} />
-//         <Info label="Material" value={product.material} />
-
-//         <div className="bg-gray-50 p-3 rounded border col-span-2">
-//           <p className="text-xs text-gray-500">Sizes</p>
-//           <p>{product.size?.join(", ")}</p>
-//         </div>
-
-//       </div>
-
-//       {/* Description */}
-//       <div className="mt-6">
-//         <p className="font-semibold">Description</p>
-//         <p className="text-gray-600">{product.description}</p>
-//       </div>
-
-//       {/* Buttons */}
-//       <div className="mt-6 flex gap-3">
-
-//         <button
-//           onClick={() => handleedit(product)}
-//           className="flex items-center gap-2 px-4 py-2 bg-gray-200 rounded"
-//         >
-//           <MdEdit /> Edit
-//         </button>
-
-//         <button
-//           onClick={() => handledelete(product._id)}
-//           className="flex items-center gap-2 px-4 py-2 bg-red-200 text-red-700 rounded"
-//         >
-//           <MdDelete /> Delete
-//         </button>
-
-//       </div>
-
-//       {/* Image Modal */}
-//       {oneImagemodal && (
-//         <div className="fixed inset-0 bg-black/40 flex justify-center items-center">
-
-//           <div className="bg-white p-5 rounded-lg w-[400px]">
-
-//             <img
-//               src={oneImagemodal.url}
-//               className="w-full h-64 object-cover rounded"
-//             />
-
-//             <input
-//               type="file"
-//               accept="image/*"
-//               className="mt-3"
-//               onChange={(e) => setnewImage(e.target.files[0])}
-//             />
-
-//             <div className="flex justify-end gap-3 mt-4">
-
-//               <button
-//                 onClick={() => setoneImagemodal(null)}
-//                 className="px-4 py-2 border rounded"
-//               >
-//                 Cancel
-//               </button>
-
-//               <button
-//                 onClick={handleUpdateImage}
-//                 className="px-4 py-2 bg-black text-white rounded"
-//               >
-//                 Update
-//               </button>
-
-//             </div>
-//           </div>
-
-//         </div>
-//       )}
-
-//     </div>
-//   );
-// };
-
-// const Info = ({ label, value }) => (
-//   <div className="bg-gray-50 p-3 rounded border">
-//     <p className="text-xs text-gray-500">{label}</p>
-//     <p>{value}</p>
-//   </div>
-// );
-
-// export default OneProductDetails;

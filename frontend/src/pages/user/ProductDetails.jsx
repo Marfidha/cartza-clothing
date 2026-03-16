@@ -6,6 +6,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { fetchWishlist,toggleWishlist } from '../../Redux/Slices/WhishlistSlice.js';
 import { fetchCategories } from "../../Redux/Slices/CategorySlice.js";
 import UserRegistration from './UserRegistration';
+import API from '../../../config/api.js';
 
 
 const ChevronDown = () => (
@@ -66,11 +67,11 @@ useEffect(() => {
 
     try {
       const query = new URLSearchParams(location.search).get("q");
-      let url = `http://localhost:3001/api/product/productbycategory?slug=${category}`;
+      let url = `/api/product/productbycategory?slug=${category}`;
       if (query) {
         url += `&q=${query}`;
       }
-      const res = await axios.get(url);
+      const res = await API.get(url);
       setproduct(res.data);
     } catch (err) {
       console.error(err);
@@ -317,128 +318,3 @@ export default ProductDetails;
 
 
 
-
-
-// import React, { useEffect, useState } from 'react'
-// import axios from "axios"
-// import { useNavigate ,useParams } from 'react-router-dom';
-// import menbanner from "../../assets/men-main-image.jpg"
-
-// import productimg1 from "../../assets/3f46a4031152b05e223a0e5edba27e4ccf677f41.jpg"
-// import whish from '../../assets/icons8-like-50.png'
-// import { useDispatch, useSelector } from "react-redux";
-// import { fetchWishlist,toggleWishlist } from '../../Redux/Slices/WhishlistSlice';
-// import { fetchCategories } from "../../Redux/Slices/CategorySlice.js";
-// import UserRegistration from './UserRegistration';
-
-// function ProductDetails() {
-
-//   const { category } = useParams()
-//   const navigate= useNavigate()
-//   const dispatch = useDispatch();
-
-//    const [product ,setproduct]=useState([])
-//    const [showLogin, setShowLogin] = useState(false);
-//       const { items, loading, error } = useSelector((state) => state.categories);
-//        // const {  subItems,  subLoading,  subError } = useSelector((state) => state.subcategories);
-//        useEffect(()=>{
-//          dispatch(fetchCategories())
-//          // dispatch(fetchSubCategories())
-//        },[dispatch])
-//        const currentCategory = items.find(
-//   (cat) => cat.slug === category
-// );
-
-
-
-// const wishlistIds = useSelector(state => state.wishlist.ids);
-// const isLoggedIn = Boolean(localStorage.getItem("token"));
-
-// useEffect(() => {
-//   if (isLoggedIn) {
-//     dispatch(fetchWishlist());
-//   }
-// }, [isLoggedIn, dispatch]);
- 
-
-//   useEffect(()=>{
-//     setproduct([])
-//     const res=axios.get(`http://localhost:3001/api/product/productbycategory?slug=${category}`)
-//     .then(res=> setproduct(res.data))
-//     .catch((err) => console.error(err));
-//   },[category])
-
-//   const handleWishlistClick = (e, productId) => {
-//   e.stopPropagation();
-
-//   if (!isLoggedIn) {
-//     navigate("/login");
-//     return;
-//   }
-
-//   dispatch(toggleWishlist(productId));
-// };
-
-//   return (
-//     <>
-
-    
-//    <main>
-//     <section>
-//         <div className='h-auto'>
-//             <img
-//   src={currentCategory?.banner}
-//   alt={currentCategory?.name}
-//   className="w-full"
-// />
-
-//         </div>
-//     </section>
-//     <section>
-//       <div className='p-10'>
-//         <div className="h-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-1 ">
-//   {product.map((product) => (
-//     <div
-//       key={product._id}
-//       onClick={()=>navigate(`/product/${product._id}`)}
-//       className="bg-white   transition"
-//     >
-//       <img
-//         src={product.image?.[3]?.url}
-//         alt={product.productName}
-//         className="w-full  object-cover rounded-t-lg"
-//       />
-
-//       <div className="p-4 flex justify-between" >
-//         <div>
-//         <h3 className="font-semibold text-gray-800"> {product.productName}</h3>
-//          <p className="text-gray-600">₹{product.price}</p>
-//          </div>
-//          <div >
-//           <img
-//   onClick={(e) => handleWishlistClick(e, product._id)}
-//   className="w-5 h-5 cursor-pointer"
-//   src={
-//     isLoggedIn && wishlistIds.includes(product._id)
-//       ? "https://cdn-icons-png.flaticon.com/512/833/833472.png" // ❤️ red
-//       : whish // 🤍 normal
-//   }
-//   alt="wishlist"
-// />
-//          </div>
-//       </div>
-//     </div>
-    
-//   ))}
-// </div>
-// </div>
-
-//     </section>
-//     {showLogin && <UserRegistration onClose={() => setShowLogin(false)} />}
-
-//    </main>
-//     </>
-//   )
-// }
-
-// export default ProductDetails

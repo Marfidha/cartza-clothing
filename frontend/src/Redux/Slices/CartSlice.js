@@ -1,4 +1,5 @@
 import {createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import API from "../../../config/api";
 import axios from "axios";
 
 export const AddtoCart= createAsyncThunk("Cart/AddtoCart" ,async({productId,size},thunkAPI)=>{
@@ -7,7 +8,7 @@ export const AddtoCart= createAsyncThunk("Cart/AddtoCart" ,async({productId,size
     if(!token){
          return thunkAPI.rejectWithValue("User not logged in");
     }
-    const res= await axios.post(`http://localhost:3001/api/user/auth/addtoCart/${productId}`,{size},{ headers:{ Authorization:`Bearer ${token}`}})
+    const res= await API.post(`/api/user/auth/addtoCart/${productId}`,{size},{ headers:{ Authorization:`Bearer ${token}`}})
     return res.data;
     }catch(error){
         return thunkAPI.rejectWithValue(error.response.data.message);
@@ -22,7 +23,7 @@ export const getcartitems=createAsyncThunk("cart/getcartitems" ,async(_,thunkAPI
     if(!token){
       return  [];
     }
-     const res= await axios.get("http://localhost:3001/api/user/auth/cart",{headers:{Authorization:`Bearer ${token}`}})
+     const res= await API.get("/api/user/auth/cart",{headers:{Authorization:`Bearer ${token}`}})
       console.log(res.data);
      return res.data
     
@@ -36,7 +37,7 @@ export const getcartitems=createAsyncThunk("cart/getcartitems" ,async(_,thunkAPI
 export const updateQty = createAsyncThunk("cart/updateQty", async ({ productId, action,size }) => {
     const token = localStorage.getItem("token");
 
-    const res = await axios.patch("http://localhost:3001/api/user/auth/updateqty", { productId, action ,size}, { headers: { Authorization: `Bearer ${token}` } } );
+    const res = await API.patch("/api/user/auth/updateqty", { productId, action ,size}, { headers: { Authorization: `Bearer ${token}` } } );
 
     return res.data; 
   }
@@ -49,8 +50,8 @@ export const removeFromCart = createAsyncThunk(
     try {
       const token = localStorage.getItem("token");
 
-      const res = await axios.delete(
-        `http://localhost:3001/api/user/auth/deletecartproduct/${itemId}`,
+      const res = await API.delete(
+        `/api/user/auth/deletecartproduct/${itemId}`,
         {
           headers: { Authorization: `Bearer ${token}` },
         }

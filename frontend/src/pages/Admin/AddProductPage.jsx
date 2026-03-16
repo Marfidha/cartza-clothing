@@ -6,6 +6,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { fetchCategories } from "../../Redux/Slices/CategorySlice.js";
 import { fetchSubCategories } from "../../Redux/Slices/SubCategories.js";
 import useAlert from "../../alerts/hooks/useAlert";
+import API from '../../../config/api.js';
 
 
 const AddProductPage = () => {
@@ -31,7 +32,7 @@ const AddProductPage = () => {
 
        const fetchProduct = async () => {
              try {
-              const res = await axios.get(`http://localhost:3001/api/product/${id}`);
+              const res = await API.get(`/api/product/${id}`);
               const data = res.data;
               setproductname(data.productName);
               setMainCategory(data.mainCategory?._id || "");
@@ -43,7 +44,6 @@ const AddProductPage = () => {
               setStock(data.stock);
               setproductStatus(data.status);
               setSizes(data.size || []);
-
               setProduct(data);
               setExistingImages(data.image || []);
               } catch (err) {
@@ -74,7 +74,6 @@ const AddProductPage = () => {
             };
 
             const [existingImages, setExistingImages] = useState([]);
-
            const filteredSubs = subItems.filter( (sub) => sub.mainCategory?._id === mainCategory   );
 
         const AddProduct=async ()=>{
@@ -104,10 +103,10 @@ const AddProductPage = () => {
 
                   if(id){
                   const token = localStorage.getItem("token");
-                  await axios.put( `http://localhost:3001/api/product/product/${id}`, frormdata, { headers: { Authorization: `Bearer ${token}`,},});
+                  await API.put( `/api/product/product/${id}`, frormdata, { headers: { Authorization: `Bearer ${token}`,},});
                    showToast("Product updated successfully", "success");
                   }else{
-                  await axios.post("http://localhost:3001/api/product/addproduct" , frormdata )
+                  await API.post("/api/product/addproduct" , frormdata )
                   showToast("Product added successfully", "success");
                   setimages([]);
                   setproductname("");
@@ -121,7 +120,7 @@ const AddProductPage = () => {
                   setStock("");
                   setproductStatus(true);
                   }
-            }catch(error){
+                  }catch(error){
                   console.error("Add product error:", error.response?.data || error.message);
                   showToast(
                     error.response?.data?.message || "Failed to add product",

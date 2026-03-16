@@ -1,6 +1,7 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react'
 import {  useNavigate } from 'react-router-dom';
+import API from '../../../config/api';
 
 function AdminCustomers() {
   const navigate = useNavigate()
@@ -11,7 +12,7 @@ function AdminCustomers() {
   },[])
   const users=async ()=>{
     try{
-   const res=await axios.get("http://localhost:3001/api/admin/customers")
+   const res=await API.get("/api/admin/customers")
     console.log(res.data);
     setcustomers(res.data)
     }catch(error){

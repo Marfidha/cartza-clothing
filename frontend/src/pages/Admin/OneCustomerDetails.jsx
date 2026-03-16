@@ -1,6 +1,7 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import API from "../../../config/api";
 
 function CustomerDetails() {
   const { id } = useParams();
@@ -14,8 +15,8 @@ function CustomerDetails() {
 
   const fetchCustomer = async () => {
     try {
-      const res = await axios.get(
-        `http://localhost:3001/api/admin/customers/${id}`
+      const res = await API.get(
+        `/api/admin/customers/${id}`
       );
       setCustomer(res.data);
     } catch (err) {

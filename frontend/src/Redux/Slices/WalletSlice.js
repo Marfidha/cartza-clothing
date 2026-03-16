@@ -1,4 +1,5 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import API from "../../../config/api";
 import axios from "axios";
 
 
@@ -7,7 +8,7 @@ export const fetchWallet = createAsyncThunk("wallet/fetchWallet", async (_, { re
     try {
         const token = localStorage.getItem("token");
         if (!token) return rejectWithValue("User not authenticated");
-        const res = await axios.get("http://localhost:3001/api/user/auth/wallet/fetch", { headers: {   Authorization: `Bearer ${token}` } });
+        const res = await API.get("/api/user/auth/wallet/fetch", { headers: {   Authorization: `Bearer ${token}` } });
         return res.data;
         } catch (error) {
         return rejectWithValue(error.message);
@@ -21,7 +22,7 @@ export const addMoney = createAsyncThunk("wallet/addMoney",async (amount, { reje
     try {
          const token = localStorage.getItem("token");
         if (!token) return rejectWithValue("User not authenticated");
-      const res = await axios.post("http://localhost:3001/api/user/auth/wallet/add-money",{amount}, { headers: {  Authorization: `Bearer ${token}` },});
+      const res = await API.post("/api/user/auth/wallet/add-money",{amount}, { headers: {  Authorization: `Bearer ${token}` },});
       if (!res.ok) return rejectWithValue(data.message);
       return res.data;
     } catch (error) {
@@ -33,7 +34,7 @@ export const addMoney = createAsyncThunk("wallet/addMoney",async (amount, { reje
 export const fetchWalletTransactions = createAsyncThunk( "wallet/fetchTransactions", async (_, { rejectWithValue }) => {
     try {
       const token = localStorage.getItem("token");
-      const res = await axios.get( "http://localhost:3001/api/user/auth/wallet/transactions", {   headers: { Authorization: `Bearer ${token}` }, } );
+      const res = await API.get( "/api/user/auth/wallet/transactions", {   headers: { Authorization: `Bearer ${token}` }, } );
       return res.data;
       console.log(res.data);
       

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import API from "../../../config/api";
 
 function AdminReports() {
   const navigate=useNavigate()
@@ -27,8 +28,8 @@ const [showModal, setShowModal] = useState(false);
 
   const fetchReport = async () => {
     try {
-      const res = await axios.get(
-        "http://localhost:3001/api/admin/report"
+      const res = await API.get(
+        "/api/admin/report"
       );
 
       // ✅ Merge with defaults (extra safe)
@@ -43,8 +44,8 @@ const [showModal, setShowModal] = useState(false);
 
   const fetchFeedback = async () => {
   try {
-    const res = await axios.get(
-      "http://localhost:3001/api/admin/feedback"
+    const res = await API.get(
+      "/api/admin/feedback"
     );
 setFeedback(res.data.data);  } catch (err) {
     console.error("Feedback fetch error:", err);
@@ -57,8 +58,8 @@ const openDetails = (feedbackItem) => {
 };
 const markResolved = async () => {
   try {
-    await axios.patch(
-      `http://localhost:3001/api/admin/feedback/${selectedFeedback._id}/resolve`
+    await API.patch(
+      `/api/admin/feedback/${selectedFeedback._id}/resolve`
     );
 
     fetchFeedback();   // refresh list
@@ -162,10 +163,7 @@ const markResolved = async () => {
               <button  onClick={() => openDetails(f)} className="w-7 h-7 flex items-center justify-center rounded-full bg-blue-100 text-blue-600 hover:bg-blue-200">
                 👁
               </button>
-{/* 
-              <button className="w-7 h-7 flex items-center justify-center rounded-full bg-green-100 text-green-600 hover:bg-green-200">
-                ✔
-              </button> */}
+
             </td>
 
           </tr>

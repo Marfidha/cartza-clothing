@@ -4,6 +4,7 @@ import { X } from "lucide-react";
 import axios from "axios";
 import { useEffect } from "react";
 import useAlert from "../../alerts/hooks/useAlert";
+import API from "../../../config/api";
 
 function CouponsPage() {
 
@@ -38,7 +39,7 @@ const handlechange=(e)=>{
 
   const handleaddcoupon=async()=>{
     try{
-        await axios.post("http://localhost:3001/api/admin/addcoupon",{couponData})
+        await API.post("/api/admin/addcoupon",{couponData})
         setaddcoupon(false)
         // setCouponData("");
         showToast("Coupon added successfully", "success");
@@ -55,7 +56,7 @@ const handlechange=(e)=>{
 
   const coupondata=async()=>{
     try{
-  const res=  await axios.get("http://localhost:3001/api/admin/fetchcoupon")
+  const res=  await API.get("/api/admin/fetchcoupon")
   console.log(res.data);
   setcoupons(res.data)
     }catch(error){
@@ -99,8 +100,8 @@ const handleUpdateCoupon = async () => {
       status: couponData.status,
     };
 
-    await axios.put(
-      `http://localhost:3001/api/admin/update/${editingCouponId}`,
+    await API.put(
+      `/api/admin/update/${editingCouponId}`,
       payload
     );
 
@@ -120,8 +121,8 @@ const handledelete = (item) => {
     type: "danger",
     onConfirm: async () => {
       try {
-        await axios.delete(
-          `http://localhost:3001/api/admin/delete/${item._id}`
+        await API.delete(
+          `/api/admin/delete/${item._id}`
         );
 
         setcoupons((prev) =>

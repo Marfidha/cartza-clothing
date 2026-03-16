@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { fetchCategories } from "../../Redux/Slices/CategorySlice.js";
 import { fetchSubCategories } from "../../Redux/Slices/SubCategories.js";
 import useAlert from "../../alerts/hooks/useAlert";
+import API from "../../../config/api.js";
 
 
 function AdminCategory() {
@@ -15,7 +16,7 @@ function AdminCategory() {
   const { showToast, showSnackbar, showModal } = useAlert();
 
   const [editModal, setEditModal] = useState(false);
-const [editCategory, setEditCategory] = useState(null);
+  const [editCategory, setEditCategory] = useState(null);
 
   const { items, loading, error } = useSelector((state) => state.categories);
   const {  subItems,  subLoading,  subError } = useSelector((state) => state.subcategories);
@@ -55,7 +56,7 @@ const uploadImageToCloudinary = async (file) => {
     if (formData.banner) {
       bannerUrl = await uploadImageToCloudinary(formData.banner);
     }
-    const res = await axios.post("http://localhost:3001/api/admin/addmaincategory",
+    const res = await API.post("/api/admin/addmaincategory",
      {name: formData.name,
     banner: bannerUrl,
     isActive: formData.isActive,} );
@@ -75,7 +76,7 @@ const addSubCategory = async () => {
     return;
   }
   try {
-    const res = await axios.post("http://localhost:3001/api/admin/addsubcategory",{
+    const res = await API.post("/api/admin/addsubcategory",{
       name:NewSub,
       mainCategoryId:selectedMain
   })
@@ -97,8 +98,8 @@ const updateCategory = async () => {
       );
     }
 
-    await axios.put(
-      `http://localhost:3001/api/admin/updatecategory/${editCategory._id}`,
+    await API.put(
+      `/api/admin/updatecategory/${editCategory._id}`,
       {
         name: editCategory.name,
         banner: bannerUrl,
@@ -117,8 +118,8 @@ const updateCategory = async () => {
 
 const toggleCategory = async (id) => {
   try {
-    await axios.patch(
-      `http://localhost:3001/api/admin/togglecategory/${id}`
+    await API.patch(
+      `/api/admin/togglecategory/${id}`
     );
 
     showSnackbar(
@@ -126,8 +127,8 @@ const toggleCategory = async (id) => {
       "Undo",
       async () => {
         // optional undo action
-        await axios.patch(
-          `http://localhost:3001/api/admin/togglecategory/${id}`
+        await API.patch(
+          `/api/admin/togglecategory/${id}`
         );
         dispatch(fetchCategories());
       }
@@ -148,12 +149,8 @@ const deleteCategory = (id) => {
 
     onConfirm: async () => {
       try {
-        await axios.delete(
-          `http://localhost:3001/api/admin/deletecategory/${id}`
-        );
-
+        await API.delete(`/api/admin/deletecategory/${id}`);
         showToast("Category deleted successfully", "success");
-
         dispatch(fetchCategories());
       } catch (err) {
         showToast("Delete failed", "error");
@@ -363,21 +360,7 @@ const deleteCategory = (id) => {
           Active
         </label>
 
-{/*        
 
-        <label className="flex items-center gap-2">
-          <input
-            type="checkbox"
-            checked={formData.showOnHomepage}
-            onChange={(e) =>
-              setFormData({
-                ...formData,
-                showOnHomepage: e.target.checked,
-              })
-            }
-          />
-          Show on Homepage
-        </label> */}
 
       </div>
 

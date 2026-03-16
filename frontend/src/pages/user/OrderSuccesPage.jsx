@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { useLocation, useNavigate } from "react-router-dom";
-import { CheckCircle2, ArrowRight, ShoppingBag, Stars, Moon, Sun } from "lucide-react";
+import { CheckCircle2, ArrowRight, ShoppingBag,  } from "lucide-react";
 
 
 const OrderSuccesPage = () => {
@@ -70,79 +70,3 @@ const OrderSuccesPage = () => {
 };
 
 export default OrderSuccesPage;
-
-
-
-
-// import React from 'react'
-// import { useLocation, useNavigate } from "react-router-dom";
-// import { CheckCircle } from "lucide-react";
-// import OrdersPage from './OrdersPage';
-// import { useEffect } from 'react';
-
-// const OrderSuccesPage = () => {
-//       const location = useLocation();
-//   const navigate = useNavigate();
-
-//   const orderId = location.state?.orderId;
-//   useEffect(() => {
-//   window.history.replaceState({}, document.title);
-// }, []);
-//   return (
-//     <>
-//      <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
-//       <div className="bg-white shadow-xl rounded-2xl max-w-lg w-full p-8 text-center">
-        
-//         {/* Success Icon */}
-//         <CheckCircle className="mx-auto text-green-500" size={80} />
-
-//         {/* Title */}
-//         <h1 className="text-2xl md:text-3xl font-bold mt-4 text-gray-800">
-//           Order Placed Successfully 🎉
-//         </h1>
-
-//         {/* Subtitle */}
-//         <p className="text-gray-600 mt-2">
-//           Thank you for your purchase. Your order has been confirmed.
-//         </p>
-
-//         {/* Order ID */}
-//         {orderId && (
-//           <div className="bg-gray-100 rounded-lg p-4 mt-6">
-//             <p className="text-gray-600 text-sm">Order ID</p>
-//             <p className="font-semibold text-gray-800">{orderId}</p>
-//           </div>
-//         )}
-
-//         {/* Delivery Info */}
-//         <p className="text-gray-600 mt-4">
-//           Estimated delivery in <span className="font-semibold">3–5 days</span>
-//         </p>
-
-//         {/* Buttons */}
-//         <div className="flex flex-col md:flex-row gap-3 mt-8">
-          
-//           {/* View Order */}
-//           <button
-//             onClick={() => navigate("/userorders")}
-//             className="flex-1 bg-blue-600 text-white py-3 rounded-lg font-semibold hover:bg-blue-700 transition"
-//           >
-//             View Order
-//           </button>
-
-//           {/* Continue Shopping */}
-//           <button
-//             // onClick={() => navigate("/userorders")}
-//             className="flex-1 border border-gray-300 py-3 rounded-lg font-semibold hover:bg-gray-100 transition"
-//           >
-//             Continue Shopping
-//           </button>
-
-//         </div>
-//       </div>
-//     </div>
-//     </>
-//   )
-// }
-
-// export default OrderSuccesPage

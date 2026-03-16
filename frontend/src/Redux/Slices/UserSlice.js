@@ -1,11 +1,12 @@
 import { createSlice,createAsyncThunk } from "@reduxjs/toolkit";
+import API from "../../../config/api";
 import axios from "axios";
 
 export const userprofiledata=createAsyncThunk("user/userprofileData",async(_,{ rejectWithValue })=>{
       const token=localStorage.getItem("token")
     if(!token) return 
     try{
-         const res= await axios.get("http://localhost:3001/api/user/auth/user",{headers:{Authorization:`Bearer ${token}`}})
+         const res= await API.get("/api/user/auth/user",{headers:{Authorization:`Bearer ${token}`}})
                 return res.data.data;
     }catch(error){
        return rejectWithValue(

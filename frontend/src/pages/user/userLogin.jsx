@@ -3,6 +3,7 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import GoogleLogin from "../../components/auth/GoogleLogin.jsx";
 import { Mail, Lock, ArrowRight, Stars, Moon, CheckCircle, AlertCircle, X } from "lucide-react";
+import API from "../../../config/api.js";
 
 const Toast = ({ message, type, onClose }) => {
   useEffect(() => {
@@ -44,7 +45,7 @@ const UserLogin = () => {
   const handleuserlogin = async () => {
     setIsLoading(true);
     try {
-      const res = await axios.post("http://localhost:3001/api/user/auth/userlogin", { 
+      const res = await API.post("/api/user/auth/userlogin", { 
         email: Email, 
         password: Password, 
       });

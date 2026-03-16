@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import API from "../../../config/api";
 
 function AdminSalesReport() {
   const [report, setReport] = useState({
@@ -26,8 +27,8 @@ function AdminSalesReport() {
       params.to = to;
     }
 
-    const res = await axios.get(
-      "http://localhost:3001/api/admin/sales-report",
+    const res = await API.get(
+      "/api/admin/sales-report",
       { params }
     );
 

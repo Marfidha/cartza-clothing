@@ -1,45 +1,27 @@
 import React, { useState } from 'react'
 import axios from "axios"
 import { useNavigate } from 'react-router-dom'
+import API from '../../../config/api'
 
 function AdminLoginn() {
       const navigate=useNavigate()
-    const [email ,setemail]=useState("")
-    const [password ,setpassword]=useState("")
+      const [email ,setemail]=useState("")
+      const [password ,setpassword]=useState("")
   
- 
-const handlesubmit =async()=>{
-
-    const response= await axios.post("http://localhost:3001/api/admin/auth/login",{email,password} )
-    if (response.data.success) {
-    localStorage.setItem("token", response.data.token);
-    navigate("/dashboard");
-  } else {
-    alert(response.data.message);
-  }
-
-
-//     .then((response) => {
-//     if (response.data.message === "done") {
-//       navigate("/Dashboard");
-//     }
-//   })
-//   .catch((err) => {
-//     console.log(err);
-//   });
+      const handlesubmit =async()=>{
+        const response= await API.post("/api/admin/auth/login",{email,password} )
+        if (response.data.success) {
+        localStorage.setItem("token", response.data.token);
+        navigate("/dashboard");
+      } else {
+        alert(response.data.message);
+      }
      setemail("")
-    setpassword("")
-    
-    
+     setpassword("")
 }
-
   return (
     <>
-
       <div className="w-full h-screen flex">
-
-
-      {/* RIGHT SIDE – LOGIN */}
       <div className="w-full md:full h-full flex justify-center items-center bg-[#F9F7F6]">
         <div className="w-[85%] sm:w-[70%] lg:w-[30%] bg-white rounded-2xl shadow-xl p-10">
 
@@ -82,23 +64,7 @@ const handlesubmit =async()=>{
           </p>
         </div>
       </div>
-
     </div>
-  
-
-    {/* <div  className='w-full h-screen flex justify-end items-center bg-black'>
-    <div className='w-[50%] h-[90%] flex justify-center items-center  bg-white  '>
-        <div className='w-[60%] h-[50%]   border-2 rounded-2xl'>
-            <div className='w-full h-[50%] flex flex-col justify-center items-center gap-6 pt-5 '>
-                <input value={email} onChange={(e)=>setemail(e.target.value)} type="text" placeholder='enter user name' className='w-[75%] h-[30%] border border-black  placeholder-black rounded-sm'/>
-                <input value={password} onChange={(e)=>setpassword(e.target.value)} type="text" placeholder='enter password'  className='w-[75%] h-[30%] border border-black placeholder-black rounded-sm' />
-            </div>
-            <div className='w-full h-[50%] flex flex-col justify-center items-center gap-3.5'>
-                <button onClick={handlesubmit} className='border w-[60%] h-[30%] bg-black text-white rounded-md  '>Login</button>
-            </div>
-        </div>
-    </div>
-    </div> */}
     </>
   )
 }

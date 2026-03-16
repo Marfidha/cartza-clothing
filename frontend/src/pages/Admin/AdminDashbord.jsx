@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { Navigate, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import API from "../../../config/api";
 
 
 function AdminDashboard() {
@@ -8,20 +9,18 @@ function AdminDashboard() {
    const navigate = useNavigate();
 
    const [stats, setStats] = useState({
-  totalOrders: 0,
-  totalSales: 0,
-  totalCustomers: 0,
-  pendingOrders: 0,
-});
-
+    totalOrders: 0,
+    totalSales: 0,
+    totalCustomers: 0,
+    pendingOrders: 0,
+  });
 const [recentOrders, setRecentOrders] = useState([]);
-
 const fetchDashboard = async () => {
   try {
     const token = localStorage.getItem("token");
 
-    const res = await axios.get(
-      "http://localhost:3001/api/admin/dashboard",
+    const res = await API.get(
+      "/api/admin/dashboard",
       {
         headers: { "x-auth-token": token },
       }
@@ -50,8 +49,8 @@ const fetchDashboard = async () => {
       }
 
       try {
-        const response = await axios.get(
-          "http://localhost:3001/api/admin/auth/check",
+        const response = await API.get(
+          "/api/admin/auth/check",
           {
             headers: {
               "x-auth-token": token,

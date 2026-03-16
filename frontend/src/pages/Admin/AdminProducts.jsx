@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react'
 import { FiSearch, FiChevronDown } from "react-icons/fi";
 import { useNavigate } from 'react-router-dom';
 import { Outlet } from "react-router-dom";
+import API from '../../../config/api';
 
 
 function AdminProducts() {
@@ -21,7 +22,7 @@ function AdminProducts() {
 
 
   const fetchProducts = async () => {
-    const res = await axios.get("http://localhost:3001/api/product");
+    const res = await API.get("/api/product");
     console.log("FETCHED:", res.data);
     setproduct(res.data);
   };
@@ -86,7 +87,7 @@ const filteredProducts = product.filter((item) => {
   
 const fetchdeletedproduct =async ()=>{
   const token = localStorage.getItem("token")
-  const res=await axios.get("http://localhost:3001/api/product/deleted",{headers:{Authorization:`Bearer ${token}`}})
+  const res=await API.get("/api/product/deleted",{headers:{Authorization:`Bearer ${token}`}})
   console.log("deleted data",res.data);
   setdeletedproduct(res.data)
 }
@@ -94,7 +95,7 @@ const fetchdeletedproduct =async ()=>{
 const restoredproduct= async (id)=>{
     try{
       const token= localStorage.getItem("token")
-      const res= await axios.put(`http://localhost:3001/api/product/${id}/restore`,{},{headers:{Authorization:`Bearer ${token}`}} )
+      const res= await API.put(`/api/product/${id}/restore`,{},{headers:{Authorization:`Bearer ${token}`}} )
       alert(res.data.message);
       fetchdeletedproduct()
       fetchProducts()

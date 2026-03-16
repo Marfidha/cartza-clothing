@@ -1,6 +1,7 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import API from "../../../config/api";
 
 function AdminOrderDetails() {
   const { id } = useParams();
@@ -13,8 +14,8 @@ function AdminOrderDetails() {
   }, []);
 
   const fetchOrder = async () => {
-    const res = await axios.get(
-      `http://localhost:3001/api/admin/orders/${id}`
+    const res = await API.get(
+      `/api/admin/orders/${id}`
     );
     setOrder(res.data);
   };

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { Mail, Lock, KeyRound, ArrowRight, Stars, Moon, Sun, CheckCircle2, ChevronLeft } from "lucide-react";
+import API from "../../../config/api";
 
 const ForgotPasswordPage = () => {
   const [step, setStep] = useState(1);
@@ -36,8 +37,8 @@ const ForgotPasswordPage = () => {
     setIsLoading(true);
     clearMessages();
     try {
-      await axios.post(
-        "http://localhost:3001/api/user/auth/forgot-password/send-otp",
+      await API.post(
+        "/api/user/auth/forgot-password/send-otp",
         { email }
       );
       setMessage("OTP sent to your email address");
@@ -62,8 +63,8 @@ const ForgotPasswordPage = () => {
     setIsLoading(true);
     clearMessages();
     try {
-      await axios.post(
-        "http://localhost:3001/api/user/auth/forgot-password/verify-otp",
+      await API.post(
+        "/api/user/auth/forgot-password/verify-otp",
         { email, otp }
       );
       setMessage("OTP verified successfully");
@@ -89,8 +90,8 @@ const ForgotPasswordPage = () => {
     setIsLoading(true);
     clearMessages();
     try {
-      await axios.post(
-        "http://localhost:3001/api/user/auth/forgot-password/reset",
+      await API.post(
+        "/api/user/auth/forgot-password/reset",
         { email, newPassword }
       );
       setStep(4);
@@ -300,216 +301,3 @@ const ForgotPasswordPage = () => {
 };
 
 export default ForgotPasswordPage;
-
-
-// import { useState, useEffect } from "react";
-// import axios from "axios";
-
-// const ForgotPasswordPage = () => {
-//   const [step, setStep] = useState(1);
-
-//   const [email, setEmail] = useState("");
-//   const [otp, setOtp] = useState("");
-
-//   const [newPassword, setNewPassword] = useState("");
-//   const [confirmPassword, setConfirmPassword] = useState("");
-
-//   const [message, setMessage] = useState("");
-
-//   const [timer, setTimer] = useState(0);
-
-//   // 🔁 Countdown timer for resend
-//   useEffect(() => {
-//     if (timer <= 0) return;
-
-//     const interval = setInterval(() => {
-//       setTimer((prev) => prev - 1);
-//     }, 1000);
-
-//     return () => clearInterval(interval);
-//   }, [timer]);
-
-//   // STEP 1 — SEND OTP
-//   const sendOtp = async () => {
-//     try {
-//       await axios.post(
-//         "http://localhost:3001/api/user/auth/forgot-password/send-otp",
-//         { email }
-//       );
-
-//       setMessage("OTP sent to email");
-//       setStep(2);
-//       setTimer(30); // start resend timer
-
-//     } catch (err) {
-//       setMessage(err.response?.data?.message || "Error");
-//     }
-//   };
-
-//   // 🔁 RESEND OTP
-//   const resendOtp = async () => {
-//     if (timer > 0) return;
-
-//     await sendOtp();
-//   };
-
-//   // STEP 2 — VERIFY OTP
-//   const verifyOtp = async () => {
-//     try {
-//       await axios.post(
-//         "http://localhost:3001/api/user/auth/forgot-password/verify-otp",
-//         { email, otp }
-//       );
-
-//       setMessage("OTP verified");
-//       setStep(3);
-
-//     } catch (err) {
-//       setMessage(err.response?.data?.message || "Invalid OTP");
-//     }
-//   };
-
-//   // STEP 3 — RESET PASSWORD
-//   const resetPassword = async () => {
-
-//     if (newPassword !== confirmPassword) {
-//       setMessage("Passwords do not match");
-//       return;
-//     }
-
-//     if (newPassword.length < 6) {
-//       setMessage("Password must be at least 6 characters");
-//       return;
-//     }
-
-//     try {
-//       await axios.post(
-//         "http://localhost:3001/api/user/auth/forgot-password/reset",
-//         { email, newPassword }
-//       );
-
-//       setMessage("Password reset successful");
-//       setStep(4);
-
-//       setTimeout(() => {
-//         window.location.href = "/login";
-//       }, 2000);
-
-//     } catch (err) {
-//       setMessage(err.response?.data?.message || "Error");
-//     }
-//   };
-
-//   return (
-//     <div className="min-h-screen flex items-center justify-center bg-gray-100">
-
-//       <div className="bg-white p-8 rounded-xl shadow w-[380px]">
-
-//         <h2 className="text-2xl font-semibold mb-6 text-center">
-//           Forgot Password
-//         </h2>
-
-//         {/* STEP 1 — EMAIL */}
-//         {step === 1 && (
-//           <>
-//             <input
-//               type="email"
-//               placeholder="Enter your email"
-//               className="border w-full px-4 py-2 rounded mb-4"
-//               value={email}
-//               onChange={(e) => setEmail(e.target.value)}
-//             />
-
-//             <button
-//               onClick={sendOtp}
-//               className="bg-black text-white w-full py-2 rounded"
-//             >
-//               Send OTP
-//             </button>
-//           </>
-//         )}
-
-//         {/* STEP 2 — OTP */}
-//         {step === 2 && (
-//           <>
-//             <input
-//               type="text"
-//               placeholder="Enter OTP"
-//               className="border w-full px-4 py-2 rounded mb-4"
-//               value={otp}
-//               onChange={(e) => setOtp(e.target.value)}
-//             />
-
-//             <button
-//               onClick={verifyOtp}
-//               className="bg-black text-white w-full py-2 rounded mb-3"
-//             >
-//               Verify OTP
-//             </button>
-
-//             {/* 🔁 RESEND */}
-//             <button
-//               onClick={resendOtp}
-//               disabled={timer > 0}
-//               className="text-sm text-gray-600 hover:underline w-full"
-//             >
-//               {timer > 0
-//                 ? `Resend OTP in ${timer}s`
-//                 : "Resend OTP"}
-//             </button>
-//           </>
-//         )}
-
-//         {/* STEP 3 — NEW PASSWORD */}
-//         {step === 3 && (
-//           <>
-//             <input
-//               type="password"
-//               placeholder="New Password"
-//               className="border w-full px-4 py-2 rounded mb-3"
-//               value={newPassword}
-//               onChange={(e) => setNewPassword(e.target.value)}
-//             />
-
-//             <input
-//               type="password"
-//               placeholder="Confirm Password"
-//               className="border w-full px-4 py-2 rounded mb-4"
-//               value={confirmPassword}
-//               onChange={(e) => setConfirmPassword(e.target.value)}
-//             />
-
-//             <button
-//               onClick={resetPassword}
-//               className="bg-black text-white w-full py-2 rounded"
-//             >
-//               Set New Password
-//             </button>
-//           </>
-//         )}
-
-//         {/* SUCCESS */}
-//         {step === 4 && (
-//           <div className="text-center">
-//             <p className="text-green-600 font-semibold mb-2">
-//               Password changed successfully 🎉
-//             </p>
-//             <p className="text-gray-500 text-sm">
-//               Redirecting to login...
-//             </p>
-//           </div>
-//         )}
-
-//         {/* MESSAGE */}
-//         {message && (
-//           <p className="text-center text-sm text-red-500 mt-4">
-//             {message}
-//           </p>
-//         )}
-
-//       </div>
-//     </div>
-//   );
-// };
-
-// export default ForgotPasswordPage;
