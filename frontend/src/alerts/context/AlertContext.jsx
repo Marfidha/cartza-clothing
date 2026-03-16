@@ -1,7 +1,7 @@
 import { createContext, useContext, useState } from "react";
-import Toastalert from "../components/Toastalert";
+import Toastalert from "../Components/Toastalert";
 import Snackbar from "../Components/Snackbar";
-import ModalAlert from "../components/ModalAlert";
+import ModalAlert from "../Components/ModalAlert";
 
 
 const AlertContext = createContext();
