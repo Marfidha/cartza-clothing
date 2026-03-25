@@ -9,6 +9,7 @@ const transporter=nodemailer.createTransport({
 })
 
 export const sendEmail=async (to,otp)=>{
+    console.log("📨 Sending email to:", to);
     await transporter.sendMail({
         from: `"CARTZA" <${process.env.EMAIL_USER}>`,
         to, 

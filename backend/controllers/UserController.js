@@ -252,12 +252,20 @@ const hashedPassword = await bcrypt.hash(password, 10);
  }
 
 export const sendResetOtp = async (req, res) => {
+   console.log(" SEND OTP HIT")
   try {
     const { email } = req.body;
+    console.log(email);
+    
+    
+    console.log("📧 EMAIL_USER:", process.env.EMAIL_USER);
+    console.log("🔑 EMAIL_PASS exists:", process.env.EMAIL_PASS ? "YES" : "NO");
 
+    
     const User = await user.findOne({ email });
 
     if (!User) {
+      console.log("❌ User not found");
       return res.status(404).json({
         message: "User not found",
       });
@@ -265,6 +273,7 @@ export const sendResetOtp = async (req, res) => {
 
     // 🔢 Generate OTP
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
+     console.log("🔢 OTP generated");
 
     const hashedOtp = await bcrypt.hash(otp, 10);
 
@@ -277,8 +286,12 @@ export const sendResetOtp = async (req, res) => {
    type: "reset",
   expiresAt: Date.now() + 5 * 60 * 1000,
 });
+console.log("📦 OTP saved to DB");
+    console.log("Before sendEmail");
 
     await sendEmail(email, otp);
+   
+console.log("After sendEmail");
 
     res.json({
       success: true,
@@ -286,6 +299,8 @@ export const sendResetOtp = async (req, res) => {
     });
 
   } catch (error) {
+      console.error("🔥 SEND OTP ERROR:", error.message);
+    console.error(error);
     res.status(500).json({ message: "Server error" });
   }
 };
@@ -335,6 +350,7 @@ export const verifyResetOtp = async (req, res) => {
     });
 
   } catch (error) {
+     console.error("SEND OTP ERROR:", error);
     res.status(500).json({ message: "Server error" });
   }
 };
