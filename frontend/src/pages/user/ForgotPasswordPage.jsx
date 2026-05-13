@@ -108,16 +108,7 @@ const ForgotPasswordPage = () => {
   return (
     <div className="min-h-screen w-full flex items-center justify-center bg-[#FDFBF9] font-sans p-4 relative overflow-hidden">
       
-      {/* Decorative background elements matching login */}
-      <div className="absolute top-[10%] left-[15%] animate-bounce" style={{ animationDuration: "5s" }}>
-        <Stars className="text-[#FFECC7] w-12 h-12" />
-      </div>
-      <div className="absolute bottom-[15%] right-[10%] animate-pulse">
-        <Moon className="text-[#E0E7FF] w-16 h-16 fill-current" />
-      </div>
-      <div className="absolute top-[20%] right-[20%]">
-        <Sun className="text-[#FFEDD5] w-8 h-8" />
-      </div>
+     
 
       <div className="w-full max-w-[480px] relative">
         <div className="bg-white rounded-[3.5rem] shadow-[20px_20px_60px_#bebebe,-20px_-20px_60px_#ffffff] p-10 border border-white/50">

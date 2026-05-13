@@ -15,7 +15,7 @@ const ProfilePage = () => {
  
   const navigate = useNavigate();
   const dispatch=useDispatch()
-const { showToast, showSnackbar, showModal } = useAlert();
+  const { showToast, showSnackbar, showModal } = useAlert();
   
 
   const [user,setuser]=useState(null)
@@ -301,27 +301,24 @@ const { showToast, showSnackbar, showModal } = useAlert();
             
             {/* PROFILE DETAILS CARD */}
             <section className="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden">
-              <div className="px-6 lg:px-8 py-6 border-b border-gray-50 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white/50">
-                <div>
-                  <h3 className="text-lg lg:text-xl font-bold">General Information</h3>
-                  <p className="text-xs lg:text-sm text-gray-400">Manage your profile details and settings</p>
-                </div>
-                <button 
-                  onClick={() => {
-                    setFormData({ name: user.name, phoneno: user.phoneno });
-                    setprofileMode(true);
-                  }}
-                  className="w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-2.5 bg-gray-900 text-white rounded-xl hover:bg-black transition-all text-sm font-medium shadow-lg shadow-gray-200"
-                >
-                  <Pencil size={14} />
-                  Edit Profile
-                </button>
+
+              <div className="px-4 lg:px-8 py-5 border-b border-gray-50 flex items-start justify-between gap-3 bg-white/50">
+              <div>
+                <h3 className="text-sm lg:text-xl font-bold">General Information</h3>
+                <p className="text-xs lg:text-sm text-gray-400"> Manage your profile details and settings</p>
               </div>
+              <button
+                onClick={() => {setFormData({ name: user.name, phoneno: user.phoneno });setprofileMode(true);}}
+                className="shrink-0 flex items-center justify-center lg:gap-2 px-3 lg:px-6 py-2.5 bg-gray-900 text-white rounded-xl hover:bg-black transition-all text-sm font-medium shadow-lg shadow-gray-200">
+                <Pencil size={14} />
+                <span className="hidden lg:block"> Profile </span>
+              </button>
+            </div>
               
-              <div className="p-6 lg:p-8 grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8">
-                <div className="flex items-start gap-4">
+              <div className="p-6 lg:p-8 grid grid-cols-1 md:grid-cols-2 gap-4 lg:gap-6">
+                <div className="flex items-start gap-2">
                   <div className="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center text-blue-600 shrink-0">
-                    <User size={20} />
+                    <User size={15} />
                   </div>
                   <div className="overflow-hidden">
                     <label className="text-[10px] lg:text-[11px] font-bold text-gray-400 uppercase tracking-wider">Full Name</label>
@@ -357,8 +354,7 @@ const { showToast, showSnackbar, showModal } = useAlert();
                 <h3 className="text-lg lg:text-xl font-bold">Saved Addresses</h3>
                 <button 
                   onClick={() => setMode("add")}
-                  className="text-xs lg:text-sm font-bold text-blue-600 hover:text-blue-700 transition-colors"
-                >
+                  className="text-xs lg:text-sm font-bold text-blue-600 hover:text-blue-700 transition-colors">
                   + Add New
                 </button>
               </div>
@@ -370,16 +366,16 @@ const { showToast, showSnackbar, showModal } = useAlert();
                     <h4 className="font-bold mb-4 text-gray-700 text-sm">{editingId ? "Modify Address" : "New Address Details"}</h4>
                    
 
-    <div className="grid md:grid-cols-2 gap-2">
+              <div className="grid md:grid-cols-2 gap-2">
 
-         <input
-          placeholder="Full Name"
-          value={addressData.name}
-          onChange={(e) =>
-            setAddressData({ ...addressData, name: e.target.value })
-          }
-          className="border rounded px-2 py-1.5 focus:outline-none focus:ring-1 focus:ring-black"
-        />
+                  <input
+                    placeholder="Full Name"
+                    value={addressData.name}
+                    onChange={(e) =>
+                      setAddressData({ ...addressData, name: e.target.value })
+                    }
+                    className="border rounded px-2 py-1.5 focus:outline-none focus:ring-1 focus:ring-black"
+                  />
 
         <input
           placeholder="Phone Number"

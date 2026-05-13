@@ -120,28 +120,13 @@ function UserRegistration() {
 
       {notification && <Toast message={notification.message} type={notification.type} onClose={() => setNotification(null)} />}
 
-      {/* Left Branding - Centered vertically and responsive */}
-      <div className="hidden md:flex flex-1 items-center justify-end px-8 z-10">
-        <div className="max-w-sm w-full">
-          <div className="inline-block p-2 bg-white rounded-2xl shadow-sm mb-6">
-            <Stars className="text-[#8B5CF6] w-6 h-6" />
-          </div>
-          <h2 className="text-4xl lg:text-5xl font-bold text-[#1E293B] leading-tight mb-4">
-            Elevate your <br />
-            <span className="text-[#8B5CF6]">Style Journey.</span>
-          </h2>
-          <p className="text-slate-500 font-medium leading-relaxed">
-            Join our community to discover curated fashion and timeless pieces designed specifically for you.
-          </p>
-        </div>
-      </div>
 
       {/* Right Form Container */}
-      <div className="flex-1 flex flex-col justify-center items-center md:items-start px-4 sm:px-12 py-8 md:py-12 z-10 overflow-visible min-h-[calc(100vh-80px)] md:min-h-screen">
+      <div className="flex-1 flex flex-col justify-center items-center   px-4 sm:px-12 py-8 md:py-12 z-10 overflow-visible min-h-[calc(100vh-80px)] md:min-h-screen">
         <div className="w-full max-w-[400px] bg-white md:bg-transparent p-6 sm:p-8 md:p-0 rounded-3xl shadow-xl md:shadow-none">
           <header className="mb-8 mt-9">
             <h1 className="text-3xl lg:text-4xl font-bold text-[#1E293B] tracking-tight">
-              User <span className="text-[#8B5CF6]">Registration.</span>
+              User <span className="text-[#8B5CF6]">Registration</span>
             </h1>
             <p className="text-slate-400 text-sm mt-2 font-medium">Step into a new world of fashion.</p>
           </header>
@@ -161,7 +146,7 @@ function UserRegistration() {
                 <button
                   onClick={handlesendotp}
                   disabled={emailVerified || loading}
-                  className={`mr-2 px-3 py-1 rounded-lg text-[10px] font-bold uppercase ${emailVerified ? "bg-emerald-50 text-emerald-600" : "bg-[#8B5CF6] text-white hover:bg-[#7C3AED]"}`}
+                  className={`mr-2 px-3 py-1 rounded-lg text-[10px] font-bold uppercase ${emailVerified ? "bg-emerald-50 text-emerald-600" : "bg-[#1E293B] text-white hover:bg-[#7C3AED]"}`}
                 >
                   {emailVerified ? "Verified" : loading ? "..." : "Verify"}
                 </button>
@@ -195,7 +180,7 @@ function UserRegistration() {
             <button
               onClick={hsndleuserRegistration}
               disabled={!emailVerified || loading}
-              className="w-full h-12 bg-[#1E293B] hover:bg-[#0F172A] text-white rounded-2xl font-bold flex items-center justify-between px-6 transition-all duration-300 shadow-lg disabled:opacity-50"
+              className="w-full h-11 lg:h-13 bg-[#1E293B] hover:bg-[#0F172A] text-white rounded-2xl font-bold flex items-center justify-between px-6 transition-all duration-300 group shadow-lg shadow-slate-200 active:scale-[0.98] disabled:opacity-50"
             >
               <span className="text-sm">{loading ? "Registering..." : "Complete Registration"}</span>
               <ArrowRight size={18} />

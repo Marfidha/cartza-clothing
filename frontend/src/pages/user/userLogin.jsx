@@ -68,16 +68,8 @@ const UserLogin = () => {
   };
 
   return (
-    <div className="h-screen w-full flex flex-col md:flex-row bg-[#FDFBF9] font-sans relative overflow-hidden">
+    <div className="h-screen w-full flex   bg-[#FDFBF9] font-sans relative overflow-hidden">
       
-      {/* Dynamic Background Elements */}
-      <div className="absolute top-[10%] left-[5%] animate-bounce opacity-40 z-0"style={{ animationDuration: "5s" }}>
-        <Stars className="text-[#FFECC7] w-12 h-12" />
-      </div>
-      <div className="absolute bottom-[10%] right-[5%] animate-pulse opacity-40 z-0">
-        <Moon className="text-[#E0E7FF] w-20 h-20 fill-current" />
-      </div>
-
       {/* Modern Toast Notification */}
       {notification && (
         <Toast 
@@ -86,30 +78,13 @@ const UserLogin = () => {
           onClose={() => setNotification(null)} 
         />
       )}
-
-      {/* Left Branding/Hero Section */}
-      <div className="hidden md:flex flex-1 items-center justify-end p-4 md:p-6 lg:p-8 lg:pr-4 z-10">
-        <div className="max-w-xs lg:max-w-sm w-full">
-          <div className="inline-block p-2 bg-white rounded-2xl shadow-sm mb-3 lg:mb-4">
-            <Stars className="text-[#8B5CF6] w-6 h-6" />
-          </div>
-          <h2 className="text-3xl lg:text-4xl font-bold text-[#1E293B] leading-tight mb-3 lg:mb-4">
-            Elevate your <br />
-            <span className="text-[#8B5CF6]">Style Journey.</span>
-          </h2>
-          <p className="text-sm lg:text-base text-slate-500 font-medium leading-relaxed">
-            Discover curated fashion,timeless pieces,and styles designed just for you.
-          </p>
-        </div>
-      </div>
-
       {/* Login Section */}
-      <div className="flex-1 h-full flex items-center justify-center md:justify-start p-4 z-10 bg-white/30 backdrop-blur-sm md:bg-transparent overflow-y-auto">
-        <div className="w-full max-w-[380px] lg:max-w-[400px] bg-white md:bg-transparent rounded-3xl md:rounded-none shadow-xl md:shadow-none p-5 sm:p-8 md:p-0 transition-all duration-500 flex flex-col justify-center">
+      <div className="flex-1 h-full flex items-center justify-center  p-4 z-10 bg-white/30 backdrop-blur-sm md:bg-transparent overflow-y-auto">
+        <div className="w-full max-w-[380px] lg:max-w-[400px]  bg-white md:bg-transparent rounded-3xl md:rounded-none shadow-xl md:shadow-none p-5 sm:p-8 md:p-0 transition-all duration-500 flex flex-col justify-center">
           
           <header className="mb-4 lg:mb-6">
             <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-[#1E293B] mb-1 tracking-tight">
-              User <span className="text-[#8B5CF6]">Login.</span>
+              User <span className="text-[#8B5CF6]">Login</span>
             </h1>
             <p className="text-slate-400 text-xs sm:text-sm font-medium">Please enter your details to continue.</p>
           </header>
