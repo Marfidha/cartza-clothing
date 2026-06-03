@@ -1,14 +1,11 @@
 import axios from "axios";
-import { 
-  Trash2, Pencil, LogOut, Home, List, Wallet, Lock, 
-  ArrowLeftRight, MapPin, User, ChevronRight, X, Phone, Mail, Menu
-} from "lucide-react";
+import {  Trash2, Pencil, LogOut, Home, List, Wallet, Lock, ArrowLeftRight, MapPin, User, ChevronRight, X, Phone, Mail, Menu} from "lucide-react";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from 'react-redux';
 import { addAddress, getaddresses, updateAddress, deleteAddress } from '../../Redux/Slices/AddressSlice';
 import useAlert from "../../alerts/hooks/useAlert";
-import API from "../../../config/api";
+import API from "../../../config/api.js";
 
 
 const ProfilePage = () => {
@@ -130,23 +127,23 @@ const ProfilePage = () => {
           };
 
          const handleDeleteAddress = async (id) => {
-  showModal({
-    title: "Delete Address",
-    message: "Are you sure you want to delete this address?",
-    type: "danger",
+          showModal({
+            title: "Delete Address",
+            message: "Are you sure you want to delete this address?",
+            type: "danger",
 
-    onConfirm: async () => {
-      try {
-        await dispatch(deleteAddress(id)).unwrap();
-        setRefreshAddresses(prev => prev + 1);
+            onConfirm: async () => {
+              try {
+                await dispatch(deleteAddress(id)).unwrap();
+                setRefreshAddresses(prev => prev + 1);
 
-        showToast("Address deleted", "success");
-      } catch (err) {
-        showToast(err?.message || "Delete failed", "error");
-      }
-    },
-  });
-};
+                showToast("Address deleted", "success");
+              } catch (err) {
+                showToast(err?.message || "Delete failed", "error");
+              }
+            },
+          });
+        };
 
 
            const changePassword = async () => {
@@ -195,8 +192,8 @@ const ProfilePage = () => {
     <div className="min-h-screen bg-[#F8F9FA] font-sans antialiased text-slate-900 pb-12">
       
       {/* MOBILE TOP NAVIGATION BAR */}
-      <div className="lg:hidden sticky top-0 z-60 bg-white border-b border-gray-100 px-4 py-4 flex items-center justify-between shadow-sm">
-        <div className="flex items-center gap-3">
+        <div className="lg:hidden fixed top-0 left-0 right-0 z-50 bg-white border-b border-gray-100 px-4 py-4 flex items-center justify-between shadow-sm">
+             <div className="flex items-center gap-3">
            <div className="w-10 h-10 rounded-xl bg-gray-900 flex items-center justify-center text-white">
              <User size={20} />
            </div>
@@ -212,7 +209,7 @@ const ProfilePage = () => {
 
       {/* MOBILE OVERLAY MENU */}
       {isMobileMenuOpen && (
-        <div className="fixed inset-0 z-100 lg:hidden">
+        <div className="fixed inset-0 z-50 lg:hidden">
            <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={() => setIsMobileMenuOpen(false)}></div>
            <div className="absolute right-0 top-0 bottom-0 w-[280px] bg-white shadow-2xl animate-in slide-in-from-right duration-300 p-6 flex flex-col">
               <div className="flex justify-between items-center mb-8">
@@ -246,7 +243,7 @@ const ProfilePage = () => {
         </div>
       )}
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 lg:pt-24">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 lg:pt-24">
         <div className="flex flex-col lg:flex-row gap-8">
           
           {/* DESKTOP LEFT SIDEBAR (Hidden on small screens) */}

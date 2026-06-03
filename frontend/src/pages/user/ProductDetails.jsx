@@ -108,12 +108,6 @@ useEffect(() => {
              <h1 className="text-4xl font-light tracking-widest uppercase">{category}</h1>
           </div>
         )}
-        <div className="absolute inset-0 bg-black/30 flex flex-col items-center justify-center">
-            <h1 className="text-white text-5xl md:text-7xl font-bold uppercase tracking-tighter drop-shadow-md mb-4">
-                {currentCategory?.name || category}
-            </h1>
-            <div className="w-16 h-0.5 bg-white/80"></div>
-        </div>
       </section>
 
       {/* Modern Sort & Filter Bar */}

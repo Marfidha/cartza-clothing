@@ -17,11 +17,19 @@ app.use(express.json());
 connectDB()
 
 
+// app.use(
+//   cors({
+//     origin: ["http://localhost:5173",
+//       "https://cartza-clothing-1.onrender.com"],
+//     methods: ["GET", "POST", "PUT","PATCH", "DELETE"],
+//     credentials: true,
+//   })
+// );
+
 app.use(
   cors({
-    origin: ["http://localhost:5173",
-      "https://cartza-clothing-1.onrender.com"],
-    methods: ["GET", "POST", "PUT","PATCH", "DELETE"],
+    origin: process.env.FRONTEND_URL,
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
     credentials: true,
   })
 );
