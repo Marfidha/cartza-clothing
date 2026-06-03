@@ -21,12 +21,11 @@ import Transactions from "../models/Transactions.js";
 export const sendOtp= async (req,res)=>{
     const {email}=req.body
 
-    // registereduser= await user.findOne({email})
-    // if(registereduser){
-    //     alert("Email already registered")
-    //      return res.status(400).json({ message: "Email already registered" });
+  const  registereduser= await user.findOne({email})
+    if(registereduser){
+         return res.status(400).json({ message: "Email already registered" });
     
-    // }
+    }
 
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
     console.log("Generated OTP:", otp);
